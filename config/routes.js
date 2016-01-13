@@ -32,9 +32,28 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'homepage'
-  }
+  '/': { controller: 'HomeController', action: 'index' },
+
+  /**
+   *  Authentication
+   */
+
+  'get /login': { controller: 'AuthController', action: 'login' },
+  'get /logout': { controller: 'AuthController', action: 'logout' },
+
+  'post /auth/local': { controller: 'AuthController', action: 'callback' },
+  'post /auth/local/:action': { controller: 'AuthController', action: 'callback' },
+
+  'get /auth/:provider': { controller: 'AuthController', action: 'provider' },
+  'get /auth/:provider/callback': { controller: 'AuthController', action: 'callback' },
+  'get /auth/:provider/:action': { controller: 'AuthController', action: 'callback' },
+
+
+  /**
+   *  Room
+   */
+
+  'get /:id': { controller: 'RoomController', action: 'enter' }
 
   /***************************************************************************
   *                                                                          *
