@@ -13,9 +13,7 @@ module.exports = {
    * `HomeController.index()`
    */
   index: function (req, res) {
-    return res.json({
-      todo: 'index() is not implemented yet!'
-    });
+    return res.view('homepage');
   }
 };
 

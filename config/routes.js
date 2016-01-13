@@ -34,6 +34,7 @@ module.exports.routes = {
 
   '/': { controller: 'HomeController', action: 'index' },
 
+
   /**
    *  Authentication
    */
@@ -53,7 +54,7 @@ module.exports.routes = {
    *  Room
    */
 
-  'get /:id': { controller: 'RoomController', action: 'enter' }
+  'get /:room': { controller: 'RoomController', action: 'enter' }
 
   /***************************************************************************
   *                                                                          *

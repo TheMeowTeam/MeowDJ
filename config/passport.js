@@ -36,7 +36,7 @@ module.exports.passport = {
     protocol: 'oauth2',
     strategy: require('passport-facebook').Strategy,
     options: {
-      clientID: local.passport.facebook.secret,
+      clientID: local.passport.facebook.key,
       clientSecret: local.passport.facebook.secret,
       scope: ['email'] /* email is necessary for login behavior */
     }
@@ -47,7 +47,7 @@ module.exports.passport = {
     protocol: 'oauth2',
     strategy: require('passport-google-oauth').OAuth2Strategy,
     options: {
-      clientID: local.passport.google.secret,
+      clientID: local.passport.google.key,
       clientSecret: local.passport.google.secret
     }
   }

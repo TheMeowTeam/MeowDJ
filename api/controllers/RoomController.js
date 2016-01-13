@@ -14,7 +14,8 @@ module.exports = {
    */
   enter: function (req, res) {
     return res.json({
-      todo: 'enter() is not implemented yet!'
+      todo: 'enter() is not implemented yet!',
+      room: 'Asking for ' + req.param('room')
     });
   }
 };
