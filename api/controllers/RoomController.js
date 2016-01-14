@@ -11,11 +11,13 @@ module.exports = {
 
   /**
    * `RoomController.enter()`
+   *
+   * Fired when a user wants to enter a room
    */
   enter: function (req, res) {
-    return res.json({
-      todo: 'enter() is not implemented yet!',
-      room: 'Asking for ' + req.param('room')
+
+    return res.view('room/room', {
+      title: req.param('room')
     });
   }
 };

@@ -11,9 +11,14 @@ module.exports = {
 
   /**
    * `HomeController.index()`
+   *
+   * Fired when a user wants to load the home page
    */
   index: function (req, res) {
-    return res.view('homepage');
+
+    return res.view('home', {
+      title: 'Home'
+    });
   }
 };
 
