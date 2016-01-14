@@ -19,9 +19,13 @@ module.exports = {
   login: function (req, res) {
 
     return res.view({
-      title: 'Login',
-      errors: req.flash('error')
+      args: {
+        title: 'Login',
+        page: 'login',
+        errors: req.flash('error')
+      }
     });
+
   },
 
 

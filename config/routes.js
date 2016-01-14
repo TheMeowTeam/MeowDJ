@@ -54,7 +54,9 @@ module.exports.routes = {
    *  Room
    */
 
-  'get /:room': { controller: 'RoomController', action: 'enter' }
+  'get /:room': { controller: 'RoomController', action: 'enter' },
+  'post /:room/subscribe': { controller: 'RoomController', action: 'subscribe' },
+  'post /:room/chat': { controller: 'RoomController', action: 'chat' }
 
   /***************************************************************************
   *                                                                          *

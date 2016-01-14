@@ -1,4 +1,8 @@
 extends ../layout.jade
 
 block body
-  h1 Hello, welcome to #{title}
+  ul#messages
+
+  form(action = '')
+    input(id = 'm' autocomplete = 'off')
+    button Send

@@ -1,14 +1,16 @@
 doctype html
 head
-  title #{title} • MeowDJ
+  title #{args.title} • MeowDJ
   meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1")
-  // SCRIPTS
-  script(src="/js/dependencies/sails.io.js")
-  // SCRIPTS END
 
-  // STYLES
   link(rel="stylesheet", href="/styles/importer.css")
-  // STYLES END
 
-body
+  script.
+    var local = !{JSON.stringify(args)}
+
+  script(src="https://code.jquery.com/jquery-2.2.0.min.js")
+  script(src="/js/dependencies/sails.io.js")
+  script(src="/js/application.js")
+
+body(id = args.page)
   block body

@@ -1,10 +1,8 @@
 extends ../layout.jade
 
 block body
-  - var e = errors
-
-  if e
-    each error in e
+  if args.errors
+    each error in args.errors
       p
         b #{error}
 

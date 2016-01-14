@@ -16,9 +16,46 @@ module.exports = {
    */
   enter: function (req, res) {
 
+    var roomId = req.param('room');
+
     return res.view('room/room', {
-      title: req.param('room')
+      args: {
+        title: roomId,
+        page: 'room',
+        roomId: roomId
+      }
     });
+  },
+
+
+  /**
+   * `RoomController.subscribe()`
+   *
+   * Subscribe new user to the room
+   */
+  subscribe: function(req, res) {
+
+    var roomId = req.param('roomId');
+
+    sails.sockets.join(req.socket, roomId);
+
+    return res.json({ result: 'ok' });
+  },
+
+
+  /**
+   * `RoomController.chat()`
+   *
+   * Fired when someone sent a chat message
+   */
+  chat: function(req, res) {
+
+    var roomId = req.param('roomId');
+    var message = req.param('message');
+
+    sails.sockets.broadcast(roomId, 'chat', message);
+
+    return res.json({ result: 'ok' });
   }
 };
 
