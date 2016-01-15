@@ -8,7 +8,7 @@ A room-based music sharing provider in node.js
 
 ## License
 
-This project is under Ce-CILL-B License, see [LICENSE.txt](https://github.com/MeowDJ/MeowDJ/LICENSE.txt).
+This project is under Ce-CILL-B License, see [LICENSE.txt](https://github.com/MeowDJ/MeowDJ/blob/master/LICENSE.txt).
 
 
 ## Team

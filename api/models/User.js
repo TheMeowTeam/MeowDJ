@@ -1,12 +1,8 @@
-var User = {
-  // Enforce model schema in the case of schemaless databases
-  schema: true,
-
+module.exports = {
   attributes: {
     username  : { type: 'string', unique: true },
     email     : { type: 'email',  unique: true },
+    rank      : { type: 'string', defaultsTo: 'basic', enum: [ 'basic', 'donor', 'staff', 'admin' ] },
     passports : { collection: 'Passport', via: 'user' }
   }
 };
-
-module.exports = User;

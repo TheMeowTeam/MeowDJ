@@ -1,8 +1,14 @@
 extends ../layout.jade
 
 block body
-  ul#messages
+  div.wrapper
+    h2 Je suis la salle #{args.roomId} !
 
-  form(action = '')
-    input(id = 'm' autocomplete = 'off')
-    button Send
+  div.chat
+    ul.messages
+
+    form(action = '')
+      div.input-group
+        input.form-control(id = "message", type = "text", placeholder = "Message...", autocomplete = "off")
+        span.input-group-btn
+          button.btn.btn-default >

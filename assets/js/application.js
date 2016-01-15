@@ -21,17 +21,25 @@ function Room() {
    */
   function enableChat() {
 
+    $('.chat .messages').css('height', $(window).height() - 34);
+
     io.socket.on('chat', function(message) {
-      $('#messages').append($('<li>').text(message));
+      $('.chat .messages').append($('<li>').append($('<b>').text(message.username + " : ")).append($('<span>').text(message.message)));
+      $('.chat .messages').animate({ scrollTop: $(document).height() }, "slow");
     });
 
-    $('form').submit(function() {
+    $('.chat form').submit(function() {
+      var textbox = $('#message');
+
+      if (!textbox.val())
+        return false;
+
       io.socket.post('/' + roomId + '/chat', {
         roomId: roomId,
-        message: $('#m').val()
+        message: textbox.val()
       });
 
-      $('#m').val('');
+      textbox.val('');
 
       return false;
     });
@@ -45,4 +53,9 @@ $(document).ready(function() {
   if (local.page == 'room') {
     new Room();
   }
+
+  $(window).resize(function() {
+    $('html, body').css('height', $('.container-fluid').height());
+  });
+
 });

@@ -1,16 +1,19 @@
 doctype html
 head
   title #{args.title} • MeowDJ
-  meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1")
+  meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
 
+  link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
   link(rel="stylesheet", href="/styles/importer.css")
 
   script.
     var local = !{JSON.stringify(args)}
 
   script(src="https://code.jquery.com/jquery-2.2.0.min.js")
+  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
   script(src="/js/dependencies/sails.io.js")
   script(src="/js/application.js")
 
 body(id = args.page)
-  block body
+  div.container-fluid
+    block body

@@ -53,7 +53,11 @@ module.exports = {
     var roomId = req.param('roomId');
     var message = req.param('message');
 
-    sails.sockets.broadcast(roomId, 'chat', message);
+    sails.sockets.broadcast(roomId, 'chat', {
+      username: req.session.user.username,
+      rank: req.session.user.rank,
+      message: message
+    });
 
     return res.json({ result: 'ok' });
   }

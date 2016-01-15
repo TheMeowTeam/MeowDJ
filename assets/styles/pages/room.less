@@ -1,47 +1,45 @@
 #room {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+  .wrapper {
+    min-height: 100%;
+    max-height: 100%;
+    width: ~"calc(100% - 330px)";
+    top: 0;
+
+    display: inline-block;
   }
 
-  body {
-    font: 13px Helvetica, Arial;
+  .chat {
+    min-height: 100%;
+    max-height: 100%;
+    width: 330px;
+
+    float: right;
+
+    .messages {
+      margin: 0;
+      padding: 0;
+
+      list-style-type: none;
+      overflow: hidden;
+
+      li {
+        padding: 5px 5px;
+
+        :nth-child(odd) {
+          background: #eee;
+        }
+      }
+    }
+
+    form {
+      height: 34px;
+      bottom: 0;
+
+      .input-group {
+        width: 100%;
+      }
+    }
   }
 
-  form {
-    background: #000;
-    padding: 3px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
-
-  form input {
-    border: 0;
-    padding: 10px;
-    width: 90%;
-    margin-right: .5%;
-  }
-
-  form button {
-    width: 9%;
-    background: rgb(130, 224, 255);
-    border: none;
-    padding: 10px;
-  }
-
-  #messages {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  #messages li {
-    padding: 5px 10px;
-  }
-
-  #messages li:nth-child(odd) {
-    background: #eee;
-  }
 }

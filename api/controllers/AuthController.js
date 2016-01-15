@@ -116,6 +116,7 @@ module.exports = {
           return tryAgain(err);
 
         req.session.authenticated = true;
+        req.session.user = user;
 
         return res.redirect('/login');
       });
