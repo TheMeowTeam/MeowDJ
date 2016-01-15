@@ -21,8 +21,6 @@ function Room() {
    */
   function enableChat() {
 
-    $('.chat .messages').css('height', $(window).height() - 34);
-
     io.socket.on('chat', function(message) {
       $('.chat .messages').append($('<li>').append($('<b>').text(message.username + " : ")).append($('<span>').text(message.message)));
       $('.chat .messages').animate({ scrollTop: $(document).height() }, "slow");
@@ -54,8 +52,11 @@ $(document).ready(function() {
     new Room();
   }
 
-  $(window).resize(function() {
-    $('html, body').css('height', $('.container-fluid').height());
-  });
+  var resize = function() {
+    $('.chat .messages').css('height', $(window).height() - 34);
+  };
+
+  $(window).resize(resize);
+  resize();
 
 });
