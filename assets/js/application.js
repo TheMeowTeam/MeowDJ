@@ -1,3 +1,4 @@
+var room;
 var player;
 
 /**
@@ -6,15 +7,44 @@ var player;
 function Room() {
 
   var roomId = local.roomId;
+  var initialized = false;
 
-  this.loadPlayer = loadPlayer
-  this.init = false;
+  this.loadPlayer = loadPlayer;
   this.enableChat = enableChat;
 
-  function loadPlayerForContent(pl, playerData) {
+  /**
+   * Enable room's player
+   */
+  function loadPlayer(player) {
+    if (initialized)
+      return;
+
+    io.socket.post('/' + roomId + '/subscribe', {
+      roomId: roomId
+    }, function (resData) {
+      if (resData.result == "ok") {
+        loadPlayerForContent(player, resData.player);
+      }
+    });
+
+    // Video Listener
+    // FIXME: May produce error if player is undefined
+    io.socket.on('playlistChanges', function (data) {
+      loadPlayerForContent(player, data)
+    });
+
+    initialized = true;
+  }
+
+  /**
+   * Load a given Youtube video ID on the player
+   */
+  function loadPlayerForContent(player, playerData) {
+
     if (playerData.type == "yt") {
-      pl.loadVideoById(playerData.data);
+      player.loadVideoById(playerData.data);
     }
+
   }
 
   /**
@@ -44,31 +74,10 @@ function Room() {
     console.log("Listening chat system")
   }
 
-  function loadPlayer(pl) {
-    if (this.init)
-      return;
-
-    io.socket.post('/' + roomId + '/subscribe', {
-      roomId: roomId
-    }, function (resData) {
-      if (resData.result == "ok") {
-        loadPlayerForContent(pl, resData.player);
-      }
-    });
-
-    // Video Listener
-    // FIXME: May produce error if player is undefined
-    io.socket.on('playlistChanges', function (data) {
-      loadPlayerForContent(pl, data)
-    });
-    this.init = true;
-  }
 }
 
-var room;
-
-// Init function need to be outside to be execute
 function onYouTubeIframeAPIReady() {
+
   player = new YT.Player('player', {
     height: '390',
     width: '640',
@@ -86,6 +95,7 @@ function onYouTubeIframeAPIReady() {
         room.loadPlayer(event.target);
         event.target.playVideo();
       },
+
       'onStateChange': function (event) {
         if (event.data == YT.PlayerState.PAUSED) {
           event.target.playVideo();

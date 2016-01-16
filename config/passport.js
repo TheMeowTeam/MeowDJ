@@ -17,10 +17,11 @@
 function generatePassportConfig(conf) {
   var config = Object.create(null);
 
-  console.log("Local Passport loaded")
+  console.log("Local Passport loaded");
+
   config["local"] = {
     strategy: require('passport-local').Strategy
-  }
+  };
 
   if (conf == null || conf.passport == null)
     return config;
@@ -35,6 +36,7 @@ function generatePassportConfig(conf) {
         consumerSecret: local.passport.twitter.secret
       }
     };
+
     console.log("Twitter Passport loaded")
   } else if (conf.passport["facebook"] != null) {
     config["facebook"] = {
@@ -46,7 +48,8 @@ function generatePassportConfig(conf) {
         clientSecret: local.passport.facebook.secret,
         scope: ['email'] /* email is necessary for login behavior */
       }
-    }
+    };
+
     console.log("Facebook Passport loaded")
   } else if (conf.passport["google"] != null) {
     config["google"] = {
@@ -57,15 +60,20 @@ function generatePassportConfig(conf) {
         clientID: local.passport.google.key,
         clientSecret: local.passport.google.secret
       }
-    }
+    };
+
     console.log("Google Passport loaded")
   }
 
   return config;
 }
-var local = null
-try {
+
+var local = null;
+
+try
+{
   local = require("./local.js");
-} catch (e) {}
+}
+catch (e) {}
 
 module.exports.passport = generatePassportConfig(local);
