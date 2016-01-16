@@ -82,6 +82,7 @@ function onYouTubeIframeAPIReady() {
     height: '390',
     width: '640',
     videoId: '',
+
     playerVars: {
       controls: 0,
       disablekb: 1,
@@ -90,6 +91,7 @@ function onYouTubeIframeAPIReady() {
       iv_load_policy: 3,
       showinfo: 0
     },
+
     events: {
       'onReady': function (event) {
         room.loadPlayer(event.target);

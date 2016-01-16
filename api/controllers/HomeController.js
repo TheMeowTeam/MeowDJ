@@ -17,7 +17,7 @@ module.exports = {
   index: function (req, res) {
 
     return res.view('home', {
-      args: {
+      data: {
         title: 'Home',
         page: 'home'
       }

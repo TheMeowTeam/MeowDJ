@@ -15,14 +15,27 @@ module.exports = {
    */
   enter: function (req, res) {
 
-    var roomId = req.param('room');
+    var roomId = req.param('room').toLowerCase();
 
-    return res.view('room/room', {
-      args: {
-        title: roomId,
-        page: 'room',
-        roomId: roomId
+    Room.findOne({
+      identifier: roomId
+    }, function (err, room) {
+
+      if (err || !room) {
+        return res.notFound({
+          data: {
+            title: '404'
+          }
+        });
       }
+
+      return res.view('room/room', {
+        data: {
+          title: room.name,
+          page: 'room',
+          roomId: roomId
+        }
+      });
     });
   },
 
@@ -36,14 +49,35 @@ module.exports = {
 
     var roomId = req.param('roomId');
 
-    sails.sockets.join(req.socket, roomId);
+    Room.findOne({
+        identifier: roomId
+      }, function (err, room) {
 
-    playerData = {
-      'videoId': 'XoyO7rQBmdQ',
-      'startSeconds': 5,
-      'suggestedQuality': 'large'
-    }; // TODO: Make the queue system
-    return res.json({result: 'ok', player: {type: "yt", data: playerData}});
+      if (err || !room) {
+        return res.notFound({
+          data: {
+            title: '404'
+          }
+        });
+      }
+
+      sails.sockets.join(req.socket, roomId);
+
+      playerData = {
+        'videoId': 'XoyO7rQBmdQ',
+        'startSeconds': 5,
+        'suggestedQuality': 'large'
+      }; // TODO: Make the queue system
+
+      return res.json({
+        result: 'ok',
+
+        player: {
+          type: "yt",
+          data: playerData
+        }
+      });
+    });
   },
 
 
@@ -57,13 +91,26 @@ module.exports = {
     var roomId = req.param('roomId');
     var message = req.param('message');
 
-    sails.sockets.broadcast(roomId, 'chat', {
-      username: req.session.user.username,
-      rank: req.session.user.rank,
-      message: message
-    });
+    Room.findOne({
+      identifier: roomId
+    }, function (err, room) {
 
-    return res.json({result: 'ok'});
+      if (err || !room) {
+        return res.notFound({
+          data: {
+            title: '404'
+          }
+        });
+      }
+      
+      sails.sockets.broadcast(roomId, 'chat', {
+        username: req.session.user.username,
+        rank: req.session.user.rank,
+        message: message
+      });
+
+      return res.json({result: 'ok'});
+    });
   }
 };
 

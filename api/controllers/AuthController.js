@@ -19,7 +19,7 @@ module.exports = {
   login: function (req, res) {
 
     return res.view({
-      args: {
+      data: {
         title: 'Login',
         page: 'login',
         errors: req.flash('error')
