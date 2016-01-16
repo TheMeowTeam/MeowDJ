@@ -14,20 +14,19 @@
  * http://passportjs.org/guide/providers/
  */
 
-function generatePassportConfig(conf) {
+function generatePassportConfiguration(conf) {
+
   var config = Object.create(null);
 
-  console.log("Local Passport loaded");
-
-  config["local"] = {
+  config['local'] = {
     strategy: require('passport-local').Strategy
   };
 
   if (conf == null || conf.passport == null)
     return config;
 
-  if (conf.passport["twitter"] != null) {
-    config["twitter"] = {
+  if (conf.passport['twitter'] != null) {
+    config['twitter'] = {
       name: 'Twitter',
       protocol: 'oauth',
       strategy: require('passport-twitter').Strategy,
@@ -36,10 +35,9 @@ function generatePassportConfig(conf) {
         consumerSecret: local.passport.twitter.secret
       }
     };
-
-    console.log("Twitter Passport loaded")
-  } else if (conf.passport["facebook"] != null) {
-    config["facebook"] = {
+  }
+  else if (conf.passport['facebook'] != null) {
+    config['facebook'] = {
       name: 'Facebook',
       protocol: 'oauth2',
       strategy: require('passport-facebook').Strategy,
@@ -49,10 +47,9 @@ function generatePassportConfig(conf) {
         scope: ['email'] /* email is necessary for login behavior */
       }
     };
-
-    console.log("Facebook Passport loaded")
-  } else if (conf.passport["google"] != null) {
-    config["google"] = {
+  }
+  else if (conf.passport['google'] != null) {
+    config['google'] = {
       name: 'Google',
       protocol: 'oauth2',
       strategy: require('passport-google-oauth').OAuth2Strategy,
@@ -61,19 +58,18 @@ function generatePassportConfig(conf) {
         clientSecret: local.passport.google.secret
       }
     };
-
-    console.log("Google Passport loaded")
   }
 
   return config;
+
 }
 
 var local = null;
 
 try
 {
-  local = require("./local.js");
+  local = require('./local.js');
 }
 catch (e) {}
 
-module.exports.passport = generatePassportConfig(local);
+module.exports.passport = generatePassportConfiguration(local);

@@ -27,6 +27,7 @@
     "sails": "~0.11.4",
     "sails-disk": "~0.10.0",
     "sails-generate-auth": "^0.3.1",
+    "sails-mysql": "^0.11.2",
     "socket.io": "^1.4.4",
     "validator": "^4.5.0"
   },
