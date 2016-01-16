@@ -6,7 +6,7 @@ var player;
  */
 function Room() {
 
-  var roomId = local.roomId;
+  var roomId = local.room.identifier;
   var initialized = false;
 
   this.loadPlayer = loadPlayer;

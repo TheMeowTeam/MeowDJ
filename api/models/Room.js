@@ -18,6 +18,6 @@ module.exports = {
   },
 
   formatIdentifier: function (name) {
-    return name.replace('[^a-zA-Z/-]+', '');
+    return name.replace(/[^A-Za-z]/g, '').toLowerCase();
   }
 };

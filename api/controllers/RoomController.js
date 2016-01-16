@@ -67,14 +67,6 @@ module.exports = {
 
       var roomName = req.param('name');
 
-      if (roomName.match(/^[0-9]+$/)) {
-        return res.view('room/create', {
-          title: 'Create a room',
-          page: 'create-room',
-          error: 'INCORRECT_NAME'
-        });
-      }
-
       Room.create({
         identifier: Room.formatIdentifier(roomName),
         name: roomName,
@@ -129,7 +121,7 @@ module.exports = {
         data: {
           title: room.name,
           page: 'room',
-          roomId: roomId
+          room: room
         }
       });
     });
