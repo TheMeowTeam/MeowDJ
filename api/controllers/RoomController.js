@@ -8,7 +8,6 @@
 module.exports = {
 
 
-
   /**
    * `RoomController.enter()`
    *
@@ -33,13 +32,18 @@ module.exports = {
    *
    * Subscribe new user to the room
    */
-  subscribe: function(req, res) {
+  subscribe: function (req, res) {
 
     var roomId = req.param('roomId');
 
     sails.sockets.join(req.socket, roomId);
 
-    return res.json({ result: 'ok' });
+    playerData = {
+      'videoId': 'XoyO7rQBmdQ',
+      'startSeconds': 5,
+      'suggestedQuality': 'large'
+    }; // TODO: Make the queue system
+    return res.json({result: 'ok', player: {type: "yt", data: playerData}});
   },
 
 
@@ -48,7 +52,7 @@ module.exports = {
    *
    * Fired when someone sent a chat message
    */
-  chat: function(req, res) {
+  chat: function (req, res) {
 
     var roomId = req.param('roomId');
     var message = req.param('message');
@@ -59,7 +63,7 @@ module.exports = {
       message: message
     });
 
-    return res.json({ result: 'ok' });
+    return res.json({result: 'ok'});
   }
 };
 

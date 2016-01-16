@@ -1,9 +1,10 @@
 extends ../layout.jade
-
+block preInit
+  script(src="https://www.youtube.com/iframe_api")
 block body
   div.wrapper
     h2 Je suis la salle #{args.roomId} !
-
+    div#player
   div.chat
     ul.messages
 

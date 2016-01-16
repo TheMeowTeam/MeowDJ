@@ -17,6 +17,7 @@
     "grunt-contrib-uglify": "~0.11.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-sails-linker": "~0.10.1",
+    "grunt-sync": "~0.5.1",
     "jade": "^1.11.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.0.0",
