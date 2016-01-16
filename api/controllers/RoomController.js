@@ -9,6 +9,94 @@ module.exports = {
 
 
   /**
+   * `RoomController.create()`
+   *
+   * Fired when a user wants to create his room
+   */
+  create: function (req, res) {
+
+    Room.findOne({
+      owner: req.session.user.id
+    }, function (err, room) {
+
+      if (err) {
+        return res.serverError({
+          data: {
+            title: '500'
+          }
+        });
+      }
+
+      data = {
+        title: 'Create a room',
+        page: 'create-room'
+      };
+
+      if (room) {
+        data.error = 'ALREADY_HAVE_ROOM';
+      }
+
+      return res.view('room/create', {data: data});
+    });
+  },
+
+
+
+  /**
+   * `RoomController.processCreate()`
+   *
+   * Fired when a user send the creation form of his room
+   */
+  processCreate: function (req, res) {
+
+    Room.findOne({
+      owner: req.session.user.id
+    }, function (err, room) {
+
+      if (err) {
+        return res.serverError({
+          data: {
+            title: '500'
+          }
+        });
+      }
+
+      if (room) {
+        return res.redirect('/create');
+      }
+
+      var roomName = req.param('name');
+
+      if (roomName.match(/^[0-9]+$/)) {
+        return res.view('room/create', {
+          title: 'Create a room',
+          page: 'create-room',
+          error: 'INCORRECT_NAME'
+        });
+      }
+
+      Room.create({
+        identifier: Room.formatIdentifier(roomName),
+        name: roomName,
+        owner: req.session.user.id
+      }, function (err, room) {
+
+        if (err || !room) {
+          return res.serverError({
+            data: {
+              title: '500'
+            }
+          });
+        }
+
+        return res.redirect('/' + room.identifier);
+      });
+    });
+  },
+
+
+
+  /**
    * `RoomController.enter()`
    *
    * Fired when a user wants to enter a room
@@ -21,7 +109,15 @@ module.exports = {
       identifier: roomId
     }, function (err, room) {
 
-      if (err || !room) {
+      if (err) {
+        return res.serverError({
+          data: {
+            title: '500'
+          }
+        });
+      }
+
+      if (!room) {
         return res.notFound({
           data: {
             title: '404'
@@ -102,7 +198,7 @@ module.exports = {
           }
         });
       }
-      
+
       sails.sockets.broadcast(roomId, 'chat', {
         username: req.session.user.username,
         rank: req.session.user.rank,

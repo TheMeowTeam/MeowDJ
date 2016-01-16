@@ -46,17 +46,20 @@ module.exports.routes = {
   'post /auth/local/:action': { controller: 'AuthController', action: 'callback' },
 
   'get /auth/:provider': { controller: 'AuthController', action: 'provider' },
-  'get /auth/:provider/callback': { controller: 'AuthController', action: 'callback' },
-  'get /auth/:provider/:action': { controller: 'AuthController', action: 'callback' },
+    'get /auth/:provider/callback': { controller: 'AuthController', action: 'callback' },
+    'get /auth/:provider/:action': { controller: 'AuthController', action: 'callback' },
 
 
   /**
    *  Room
    */
 
+  'get /create': { controller: 'RoomController', action: 'create' },
+    'post /create': { controller: 'RoomController', action: 'processCreate' },
+
   'get /:room': { controller: 'RoomController', action: 'enter' },
-  'post /:room/subscribe': { controller: 'RoomController', action: 'subscribe' },
-  'post /:room/chat': { controller: 'RoomController', action: 'chat' }
+    'post /:room/subscribe': { controller: 'RoomController', action: 'subscribe' },
+    'post /:room/chat': { controller: 'RoomController', action: 'chat' }
 
   /***************************************************************************
   *                                                                          *
