@@ -6,34 +6,78 @@ var player;
  */
 function Room() {
 
-  var roomId = local.room.identifier;
+  var room = local.room;
+  var messages = $('.chat .messages');
+  var subscribeResponse = null;
   var initialized = false;
 
-  this.loadPlayer = loadPlayer;
-  this.enableChat = enableChat;
+  this.initialize = initialize;
+  this.initializePlayer = initializePlayer;
 
   /**
-   * Enable room's player
+   * Initialize room's components
    */
-  function loadPlayer(player) {
+  function initialize() {
+
     if (initialized)
       return;
 
-    io.socket.post('/' + roomId + '/subscribe', {
-      roomId: roomId
-    }, function (resData) {
-      if (resData.result == "ok") {
-        loadPlayerForContent(player, resData.player);
+    io.socket.post('/' + room.identifier + '/subscribe', {
+      roomId: room.identifier
+    }, function (response) {
+
+      if (response.result != 'ok') {
+        writeChatMessage('System', 'An error occured when loading this room, please try again later or contact a staff member!', 'system');
+        return;
       }
+
+      subscribeResponse = response;
+
+      initializeChat(response);
     });
 
-    // Video Listener
+    initialized = true;
+  }
+
+  /**
+   * Initialize room's player
+   */
+  function initializePlayer(player) {
+
+    loadPlayerForContent(player, subscribeResponse.player);
+
     // FIXME: May produce error if player is undefined
     io.socket.on('playlistChanges', function (data) {
       loadPlayerForContent(player, data)
     });
+  }
 
-    initialized = true;
+  /**
+   * Initialize room's chat
+   */
+  function initializeChat(response) {
+
+    $('.chat form').submit(function () {
+      var textbox = $('#message');
+
+      if (!textbox.val())
+        return false;
+
+      io.socket.post('/' + room.identifier + '/chat', {
+        roomId: room.identifier,
+        message: textbox.val()
+      });
+
+      textbox.val('');
+
+      return false;
+    });
+
+    io.socket.on('chat', function (data) {
+      writeChatMessage(data.username, data.message);
+    });
+
+    writeChatMessage(room.name, response.motd);
   }
 
   /**
@@ -48,32 +92,19 @@ function Room() {
   }
 
   /**
-   * Enable room's chat
+   * Write a message in the room's chat
    */
-  function enableChat() {
-    io.socket.on('chat', function (message) {
-      $('.chat .messages').append($('<li>').append($('<b>').text(message.username + ": ")).append($('<span>').text(message.message)));
-      $('.chat .messages').animate({scrollTop: $(document).height()}, "slow");
-    });
+  function writeChatMessage(sender, message, style) {
 
-    $('.chat form').submit(function () {
-      var textbox = $('#message');
+    var messageEntry = $('<li>');
 
-      if (!textbox.val())
-        return false;
+    if (style) {
+      messageEntry.addClass('chat-' + style);
+    }
 
-      io.socket.post('/' + roomId + '/chat', {
-        roomId: roomId,
-        message: textbox.val()
-      });
-
-      textbox.val('');
-
-      return false;
-    });
-    console.log("Listening chat system")
+    messages.append(messageEntry.append($('<b>').text(sender + ": ")).append($('<span>').text(message)));
+    messages.animate({scrollTop: $(document).height()}, "slow");
   }
-
 }
 
 function onYouTubeIframeAPIReady() {
@@ -94,7 +125,7 @@ function onYouTubeIframeAPIReady() {
 
     events: {
       'onReady': function (event) {
-        room.loadPlayer(event.target);
+        room.initializePlayer(event.target);
         event.target.playVideo();
       },
 
@@ -105,14 +136,13 @@ function onYouTubeIframeAPIReady() {
       }
     }
   });
-
 }
 
 $(document).ready(function () {
 
   if (local.page == 'room') {
     room = new Room();
-    room.enableChat();
+    room.initialize();
   }
 
   var resize = function () {
@@ -121,5 +151,4 @@ $(document).ready(function () {
 
   $(window).resize(resize);
   resize();
-
 });

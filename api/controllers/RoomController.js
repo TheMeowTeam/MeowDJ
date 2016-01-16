@@ -142,11 +142,7 @@ module.exports = {
       }, function (err, room) {
 
       if (err || !room) {
-        return res.notFound({
-          data: {
-            title: '404'
-          }
-        });
+        return res.json({result: 'error'});
       }
 
       sails.sockets.join(req.socket, roomId);
@@ -159,6 +155,8 @@ module.exports = {
 
       return res.json({
         result: 'ok',
+
+        motd: room.motd,
 
         player: {
           type: "yt",
@@ -184,17 +182,47 @@ module.exports = {
     }, function (err, room) {
 
       if (err || !room) {
-        return res.notFound({
-          data: {
-            title: '404'
-          }
-        });
+        return res.json({result: 'error'});
       }
 
       sails.sockets.broadcast(roomId, 'chat', {
         username: req.session.user.username,
         rank: req.session.user.rank,
         message: message
+      });
+
+      return res.json({result: 'ok'});
+    });
+  },
+
+
+
+  /**
+   * `RoomController.processConfiguration()`
+   *
+   * Fired when the room's owner edit his room
+   */
+  processConfiguration: function (req, res) {
+
+    var roomId = req.param('roomId');
+    var motd = req.param('motd');
+
+    Room.findOne({
+      identifier: roomId
+    }, function (err, room) {
+
+      if (err || !room) {
+        return res.json({result: 'error'});
+      }
+
+      Room.update({
+        identifier: roomId
+      }, {
+        motd: motd
+      });
+
+      sails.sockets.broadcast(roomId, 'configuration', {
+        motd: motd
       });
 
       return res.json({result: 'ok'});
