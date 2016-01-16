@@ -14,41 +14,58 @@
  * http://passportjs.org/guide/providers/
  */
 
-var local = require("./local.js");
+function generatePassportConfig(conf) {
+  var config = Object.create(null);
 
-module.exports.passport = {
-  local: {
+  console.log("Local Passport loaded")
+  config["local"] = {
     strategy: require('passport-local').Strategy
-  },
-
-  twitter: {
-    name: 'Twitter',
-    protocol: 'oauth',
-    strategy: require('passport-twitter').Strategy,
-    options: {
-      consumerKey: local.passport.twitter.key,
-      consumerSecret: local.passport.twitter.secret
-    }
-  },
-
-  facebook: {
-    name: 'Facebook',
-    protocol: 'oauth2',
-    strategy: require('passport-facebook').Strategy,
-    options: {
-      clientID: local.passport.facebook.key,
-      clientSecret: local.passport.facebook.secret,
-      scope: ['email'] /* email is necessary for login behavior */
-    }
-  },
-
-  google: {
-    name: 'Google',
-    protocol: 'oauth2',
-    strategy: require('passport-google-oauth').OAuth2Strategy,
-    options: {
-      clientID: local.passport.google.key,
-      clientSecret: local.passport.google.secret
-    }
   }
-};
+
+  if (conf == null || conf.passport == null)
+    return config;
+
+  if (conf.passport["twitter"] != null) {
+    config["twitter"] = {
+      name: 'Twitter',
+      protocol: 'oauth',
+      strategy: require('passport-twitter').Strategy,
+      options: {
+        consumerKey: local.passport.twitter.key,
+        consumerSecret: local.passport.twitter.secret
+      }
+    };
+    console.log("Twitter Passport loaded")
+  } else if (conf.passport["facebook"] != null) {
+    config["facebook"] = {
+      name: 'Facebook',
+      protocol: 'oauth2',
+      strategy: require('passport-facebook').Strategy,
+      options: {
+        clientID: local.passport.facebook.key,
+        clientSecret: local.passport.facebook.secret,
+        scope: ['email'] /* email is necessary for login behavior */
+      }
+    }
+    console.log("Facebook Passport loaded")
+  } else if (conf.passport["google"] != null) {
+    config["google"] = {
+      name: 'Google',
+      protocol: 'oauth2',
+      strategy: require('passport-google-oauth').OAuth2Strategy,
+      options: {
+        clientID: local.passport.google.key,
+        clientSecret: local.passport.google.secret
+      }
+    }
+    console.log("Google Passport loaded")
+  }
+
+  return config;
+}
+var local = null
+try {
+  local = require("./local.js");
+} catch (e) {}
+
+module.exports.passport = generatePassportConfig(local);
