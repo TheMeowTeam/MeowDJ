@@ -80,6 +80,12 @@ exports.register = function (req, res, next) {
         });
       }
 
+      var response = User.sendActivationEmail(user);
+
+      if (response.status != 'ok') {
+        return next(response.error);
+      }
+
       next(null, user);
     });
   });

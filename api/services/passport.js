@@ -134,6 +134,12 @@ passport.connect = function (req, query, profile, next) {
               return next(err);
             }
 
+            var response = User.sendActivationEmail(user);
+
+            if (response.status != 'ok') {
+              return next(response.error);
+            }
+
             next(err, user);
           });
         });

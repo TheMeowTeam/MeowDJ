@@ -18,7 +18,8 @@ module.exports = {
     activation_token : { type: 'string', required: true }
   },
 
-  generateActivationToken: function() {
+  generateActivationToken: function () {
+
     var activation_token = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -27,5 +28,31 @@ module.exports = {
     }
 
     return activation_token;
+  },
+
+  sendActivationEmail: function (user) {
+
+    var local = require('../../config/local.js');
+    var nodemailer = require('nodemailer');
+    var transporter = nodemailer.createTransport(local.nodemailer.transport);
+
+    var mailOptions = {
+      from: local.nodemailer.as,
+      to: user.email,
+      subject: 'Welcome to Meow.DJ!',
+      text: 'Welcome to Meow.DJ, ' + user.username + '!\n\nPlease activate your account by clicking this link:\nhttps://meow.dj/activate/' + user.activation_token + '\n\nSee you later :)\nMeow.DJ\'s team'
+    };
+
+    transporter.sendMail(mailOptions, function (err, info) {
+
+      if (err) {
+        return {status: 'error', error: err};
+      }
+      else {
+        return {status: 'ok'};
+      }
+    });
+
+    return {status: 'error', error: 'NO_MAIL_SENT'};
   }
 };
