@@ -8,9 +8,9 @@
 module.exports = {
 
   attributes: {
-    identifier : { type: 'string', unique: true },
-    name       : { type: 'string', unique: true },
-    owner      : { type: 'integer', unique: true },
+    identifier : { type: 'string', unique: true, required: true },
+    name       : { type: 'string', unique: true, required: true },
+    owner      : { type: 'integer', unique: true, required: true },
     motd       : { type: 'string', defaultsTo: 'Beautiful message of the day!' },
     theme      : { type: 'string', defaultsTo: 'basic' },
     managers   : { type: 'array', defaultsTo: [] },

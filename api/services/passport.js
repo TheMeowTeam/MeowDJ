@@ -96,6 +96,9 @@ passport.connect = function (req, query, profile, next) {
     return next(new Error('Neither a username nor email was available'));
   }
 
+  user.rank = 'basic';
+  user.activation_token = User.generateActivationToken();
+
   Passport.findOne({
     provider   : provider
   , identifier : query.identifier.toString()

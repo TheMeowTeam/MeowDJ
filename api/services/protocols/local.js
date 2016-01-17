@@ -44,8 +44,10 @@ exports.register = function (req, res, next) {
   }
 
   User.create({
-    username : username
-  , email    : email
+    username         : username
+  , email            : email
+  , rank             : 'basic'
+  , activation_token : User.generateActivationToken()
   }, function (err, user) {
     if (err) {
       if (err.code === 'E_VALIDATION') {

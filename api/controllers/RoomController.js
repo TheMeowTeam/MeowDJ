@@ -20,11 +20,7 @@ module.exports = {
     }, function (err, room) {
 
       if (err) {
-        return res.serverError({
-          data: {
-            title: '500'
-          }
-        });
+        return res.serverError(err);
       }
 
       data = {
@@ -54,11 +50,7 @@ module.exports = {
     }, function (err, room) {
 
       if (err) {
-        return res.serverError({
-          data: {
-            title: '500'
-          }
-        });
+        return res.serverError(err);
       }
 
       if (room) {
@@ -73,12 +65,11 @@ module.exports = {
         owner: req.session.user.id
       }, function (err, room) {
 
-        if (err || !room) {
-          return res.serverError({
-            data: {
-              title: '500'
-            }
-          });
+        if (err) {
+          return res.serverError(err);
+        }
+        else if (!room) {
+          return res.serverError('Failed to create the room!');
         }
 
         return res.redirect('/' + room.identifier);
@@ -102,19 +93,10 @@ module.exports = {
     }, function (err, room) {
 
       if (err) {
-        return res.serverError({
-          data: {
-            title: '500'
-          }
-        });
+        return res.serverError(err);
       }
-
-      if (!room) {
-        return res.notFound({
-          data: {
-            title: '404'
-          }
-        });
+      else if (!room) {
+        return res.notFound();
       }
 
       return res.view('room/room', {
@@ -126,6 +108,7 @@ module.exports = {
       });
     });
   },
+
 
 
   /**

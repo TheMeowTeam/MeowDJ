@@ -1,8 +1,8 @@
 extends ../layout.jade
 
 block body
-  if data.errors
-    each error in data.errors
+  if data.error
+    each error in data.error
       p
         b #{error}
 

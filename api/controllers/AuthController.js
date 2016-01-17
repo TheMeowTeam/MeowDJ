@@ -22,7 +22,7 @@ module.exports = {
       data: {
         title: 'Login',
         page: 'login',
-        errors: req.flash('error')
+        error: req.flash('error')
       }
     });
 
@@ -118,7 +118,12 @@ module.exports = {
         req.session.authenticated = true;
         req.session.user = user;
 
-        return res.redirect('/login');
+        if (user.activation_token == 'activated') {
+          return res.redirect('/');
+        }
+        else {
+          return res.redirect('/activate');
+        }
       });
     });
   },

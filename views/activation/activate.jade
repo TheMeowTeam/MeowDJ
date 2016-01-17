@@ -1,0 +1,13 @@
+extends ../layout
+
+block body
+  if data.error
+    each error in data.error
+      p
+        b #{error}
+
+  h1 Activate your account
+
+  form(action = '/activate', method = 'post')
+    input(type = 'text', name = 'token', placeholder = 'Activation token', required)
+    button(type = 'submit') Activate

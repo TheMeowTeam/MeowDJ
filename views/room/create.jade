@@ -4,8 +4,10 @@ block body
   h1 Create a room
 
   if data.error
-    h3 #{data.error}
-  else
-    form(action = '/create', method = 'post')
-      input(type = 'text', name = 'name', placeholder = 'Name of the room', required)
-      button(type = 'submit') Create
+    each error in data.error
+      p
+        b #{error}
+
+  form(action = '/create', method = 'post')
+    input(type = 'text', name = 'name', placeholder = 'Name of the room', required)
+    button(type = 'submit') Create
