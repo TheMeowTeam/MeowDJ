@@ -57,6 +57,7 @@ module.exports.routes = {
   'get /activate': { controller: 'ActivationController', action: 'activate' },
     'post /activate': { controller: 'ActivationController', action: 'processActivate' },
     'get /activate/:token': { controller: 'ActivationController', action: 'processActivate' },
+    'get /activate/send': { controller: 'ActivationController', action: 'sendActivationEmail' },
 
 
   /**

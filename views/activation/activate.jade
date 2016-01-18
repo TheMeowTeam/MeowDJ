@@ -11,3 +11,6 @@ block body
   form(action = '/activate', method = 'post')
     input(type = 'text', name = 'token', placeholder = 'Activation token', required)
     button(type = 'submit') Activate
+
+  p No activation email?
+    a(href = '/activate/send') Send another

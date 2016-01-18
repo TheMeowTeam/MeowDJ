@@ -17,7 +17,7 @@ module.exports = {
 
     var data = {
       title: 'Activate your account',
-      page: 'activate'
+      page: 'activate',
     };
 
     if (req.flash('error')) {
@@ -25,6 +25,10 @@ module.exports = {
     }
     else if (req.session.user.activation_token == 'activated') {
       data.error = 'ALREADY_ACTIVATED';
+    }
+
+    if (req.flash('sent')) {
+      data.sent = req.flash('sent');
     }
 
     return res.view('activation/activate', {data: data});
@@ -57,6 +61,7 @@ module.exports = {
 
       if (!user) {
         req.flash('error', 'INCORRECT_TOKEN');
+        req.flash('form', req.body);
         return res.redirect('/activate');
       }
 
@@ -73,6 +78,38 @@ module.exports = {
         return res.redirect('/');
       });
     });
+  },
+
+
+
+  /**
+   * `ActivationController.sendActivationEmail()`
+   *
+   * Fired when a user send the activation form OR click
+   * the link sent by email
+   */
+  sendActivationEmail: function (req, res) {
+
+    console.log('sending new mail');
+
+    if (req.session.user.activation_token == 'activated') {
+      return res.redirect('/activate');
+    }
+
+    var response = User.sendActivationEmail(req.session.user);
+
+    if (response.status != 'ok') {
+      req.flash('error', response.error);
+      req.flash('form', req.body);
+    }
+    else {
+      req.flash('sent', true);
+      req.flash('form', req.body);
+    }
+
+    console.log(response);
+
+    return res.redirect('/activate');
   }
 };
 
