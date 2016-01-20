@@ -1,0 +1,15 @@
+extends ../layout
+
+block body
+  if data.error
+    each error in data.error
+      p
+        b #{error}
+
+  h1 Welcome to Meow.DJ!
+  h4 It'm almost finished, just fill theses boxes below! Don't worry, you can change this later ;)
+
+  form(action = '/welcome', method = 'post')
+    input(type = 'text', name = 'username', value = '!{data.user.username}', placeholder = 'Username', required)
+    input(type = 'email', name = 'email', value = '!{data.user.email}', placeholder = 'Email address', required)
+    button(type = 'submit') Save
