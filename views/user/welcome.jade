@@ -7,9 +7,37 @@ block body
         b #{error}
 
   h1 Welcome to Meow.DJ!
-  h4 It'm almost finished, just fill theses boxes below! Don't worry, you can change this later ;)
+  h4 It'm almost finished, just fill theses boxes below!
 
-  form(action = '/welcome', method = 'post')
-    input(type = 'text', name = 'username', value = '!{data.user.username}', placeholder = 'Username', required)
-    input(type = 'email', name = 'email', value = '!{data.user.email}', placeholder = 'Email address', required)
-    button(type = 'submit') Save
+  form(action = '/welcome', method = 'post').form-horizontal
+    div.form-group
+      label(for = 'username').control-label.col-sm-1
+        | Username
+      div.col-sm-5
+        input(type = 'text', name = 'username', id = 'username', value = '#{data.user.username}', placeholder = 'Username', required).form-control
+
+    div.form-group
+      label(for = 'email').control-label.col-sm-1
+        | Email
+      div.col-sm-5
+        input(type = 'email', name = 'email', id = 'email', value = '#{data.user.email}', placeholder = 'Email address', required).form-control
+
+    div.form-group
+      div.col-sm-offset-1.col-sm-5
+        div.checkbox
+          label(for = 'newsletter')
+            input(type = 'checkbox', name = 'newsletter', id = 'newsletter').forn-control
+            | I agree that Meow.DJ sending me their newsletter
+
+    div.form-group
+      div.col-sm-offset-1.col-sm-5
+        div.checkbox
+          label(for = 'tos')
+            input(type = 'checkbox', name = 'tos', id = 'tos', required).forn-control
+            | I accept the&nbsp;
+            a(href = '/tos') Terms of Service
+            |  of Meow.DJ
+
+    div.form-group
+      div.col-sm-offset-1.col-sm-10
+        button(type = 'submit').btn.btn-primary Save

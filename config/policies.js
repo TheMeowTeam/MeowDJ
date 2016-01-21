@@ -36,8 +36,12 @@ module.exports.policies = {
     '*': [ 'passport', 'sessionAuth' ]
   },
 
-  RoomController: {
+  UserController: {
     '*': [ 'passport', 'sessionAuth', 'activatedAccount' ]
+  },
+
+  RoomController: {
+    '*': [ 'passport', 'sessionAuth', 'activatedAccount', 'finalizedAccount' ]
   }
 
 

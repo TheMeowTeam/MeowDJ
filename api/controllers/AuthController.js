@@ -29,6 +29,7 @@ module.exports = {
   },
 
 
+
   /**
    * `AuthController.logout()`
    *
@@ -50,6 +51,7 @@ module.exports = {
   },
 
 
+
   /**
    * `AuthController.provider()`
    *
@@ -59,6 +61,7 @@ module.exports = {
 
     passport.endpoint(req, res);
   },
+
 
 
   /**
@@ -118,8 +121,13 @@ module.exports = {
         req.session.authenticated = true;
         req.session.user = user;
 
-        if (user.activation_token == 'activated') {
-          return res.redirect('/');
+        if (user.activation_token === 'activated') {
+          if (user.tos == false) {
+            return res.redirect('/welcome');
+          }
+          else {
+            return res.redirect('/');
+          }
         }
         else {
           return res.redirect('/activate');
@@ -127,6 +135,7 @@ module.exports = {
       });
     });
   },
+
 
 
   /**

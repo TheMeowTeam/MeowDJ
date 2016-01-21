@@ -14,6 +14,7 @@ module.exports = {
     birthdate        : { type: 'date' },
     gender           : { type: 'string', enum: [ 'male', 'female'] },
     newsletter       : { type: 'boolean' },
+    tos              : { type: 'boolean', defaultsTo: false },
     passports        : { collection: 'Passport', via: 'user' },
     activation_token : { type: 'string', required: true }
   },

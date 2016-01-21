@@ -61,6 +61,14 @@ module.exports.routes = {
 
 
   /**
+   *  User
+   */
+
+  'get /welcome': { controller: 'UserController', action: 'welcome' },
+    'post /welcome': { controller: 'UserController', action: 'processWelcome' },
+
+
+  /**
    *  Room
    */
 

@@ -17,14 +17,20 @@ module.exports = {
 
     var data = {
       title: 'Activate your account',
-      page: 'activate',
+      page: 'activate'
     };
 
     if (req.flash('error')) {
       data.error = req.flash('error');
     }
-    else if (req.session.user.activation_token == 'activated') {
-      data.error = 'ALREADY_ACTIVATED';
+
+    if (req.session.user.activation_token == 'activated') {
+      if (req.session.user.tos === false) {
+        return res.redirect('/welcome');
+      }
+      else {
+        return res.redirect('/');
+      }
     }
 
     if (req.flash('sent')) {
@@ -47,7 +53,7 @@ module.exports = {
     var activation_token = req.param('token');
 
     if (!activation_token || req.session.user.activation_token == 'activated') {
-      return res.redirect('/activate');
+      return res.redirect('/');
     }
 
     User.findOne({
@@ -75,7 +81,7 @@ module.exports = {
           return res.serverError(err);
         }
 
-        return res.redirect('/');
+        return res.redirect('/welcome');
       });
     });
   },
@@ -93,7 +99,7 @@ module.exports = {
     console.log('sending new mail');
 
     if (req.session.user.activation_token == 'activated') {
-      return res.redirect('/activate');
+      return res.redirect('/');
     }
 
     var response = User.sendActivationEmail(req.session.user);
