@@ -23,17 +23,30 @@ block body
         input(type = 'email', name = 'email', id = 'email', value = '#{data.user.email}', placeholder = 'Email address', required).form-control
 
     div.form-group
+      label(for = 'gender-male').control-label.col-sm-1
+        | Gender
+      div.col-sm-5
+        div.radio-inline
+          label(for = 'gender-male')
+            input(type = 'radio', name = 'gender', value = 'male', id = 'gender-male', required)
+            | Male
+        div.radio-inline
+          label(for = 'gender-female')
+            input(type = 'radio', name = 'gender', value = 'female', id = 'gender-female')
+            | Female
+
+    div.form-group
       div.col-sm-offset-1.col-sm-5
         div.checkbox
           label(for = 'newsletter')
-            input(type = 'checkbox', name = 'newsletter', id = 'newsletter').forn-control
+            input(type = 'checkbox', name = 'newsletter', id = 'newsletter')
             | I agree that Meow.DJ sending me their newsletter
 
     div.form-group
       div.col-sm-offset-1.col-sm-5
         div.checkbox
           label(for = 'tos')
-            input(type = 'checkbox', name = 'tos', id = 'tos', required).forn-control
+            input(type = 'checkbox', name = 'tos', id = 'tos', required)
             | I accept the&nbsp;
             a(href = '/tos') Terms of Service
             |  of Meow.DJ

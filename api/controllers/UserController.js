@@ -48,6 +48,7 @@ module.exports = {
 
     var username = req.param('username');
     var email = req.param('email');
+    var gender = req.param('gender');
     var newsletter = req.param('newsletter');
 
     if (req.session.user.tos == true) {
@@ -67,6 +68,7 @@ module.exports = {
       }, {
         username: username,
         email: email,
+        gender: gender,
         newsletter: newsletter,
         tos: true
       }, function (err, user) {
