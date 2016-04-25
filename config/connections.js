@@ -23,17 +23,20 @@ function generateConnectionsConfiguration(conf) {
 
   var config = Object.create(null);
 
-  config['localDiskDb'] = {
-    adapter: 'sails-disk'
-  };
-
-  config['mysqlDb'] = {
-    adapter: 'sails-mysql',
-    host: conf.database.host,
-    user: conf.database.user,
-    password: conf.database.password,
-    database: conf.database.name
-  };
+  if (conf != null) {
+    config['default'] = {
+      adapter: 'sails-mysql',
+      host: conf.database.host,
+      user: conf.database.user,
+      password: conf.database.password,
+      database: conf.database.name
+    };
+  }
+  else {
+    config['default'] = {
+      adapter: 'sails-disk'
+    };
+  }
 
   return config;
 
@@ -41,10 +44,10 @@ function generateConnectionsConfiguration(conf) {
 
 var local = null;
 
-try
-{
+try {
   local = require('./local.js');
 }
-catch (e) {}
+catch (e) {
+}
 
 module.exports.connections = generateConnectionsConfiguration(local);

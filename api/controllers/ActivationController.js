@@ -104,7 +104,7 @@ module.exports = {
 
     var response = User.sendActivationEmail(req.session.user);
 
-    if (response.status != 'ok') {
+    if (response.status != 'logged' || response.status != 'activation') {
       req.flash('error', response.error);
       req.flash('form', req.body);
     }
@@ -115,6 +115,8 @@ module.exports = {
 
     console.log(response);
 
+    if (response.status == 'logged')
+      return res.redirect('/login');
     return res.redirect('/activate');
   }
 };

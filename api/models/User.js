@@ -1,22 +1,22 @@
 /**
-* User.js
-*
-* @description :: User model
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
+ * User.js
+ *
+ * @description :: User model
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
 module.exports = {
 
   attributes: {
-    username         : { type: 'string', unique: true, required: true },
-    email            : { type: 'email',  unique: true, required: true },
-    rank             : { type: 'string', enum: [ 'basic', 'donor', 'staff', 'admin' ] },
-    birthdate        : { type: 'date' },
-    gender           : { type: 'string', enum: [ 'male', 'female'] },
-    newsletter       : { type: 'boolean' },
-    tos              : { type: 'boolean', defaultsTo: false },
-    passports        : { collection: 'Passport', via: 'user' },
-    activation_token : { type: 'string', required: true }
+    username: {type: 'string', unique: true, required: true},
+    email: {type: 'email', unique: true, required: true},
+    rank: {type: 'string', enum: ['basic', 'donor', 'staff', 'admin']},
+    birthdate: {type: 'date'},
+    gender: {type: 'string', enum: ['male', 'female']},
+    newsletter: {type: 'boolean'},
+    tos: {type: 'boolean', defaultsTo: false},
+    passports: {collection: 'Passport', via: 'user'},
+    activation_token: {type: 'string', required: true}
   },
 
   generateActivationToken: function () {
@@ -24,7 +24,7 @@ module.exports = {
     var activation_token = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    for (var i=0; i < 32; i++) {
+    for (var i = 0; i < 32; i++) {
       activation_token += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
@@ -33,7 +33,26 @@ module.exports = {
 
   sendActivationEmail: function (user) {
 
-    var local = require('../../config/local.js');
+    var local = null;
+
+    try {
+      local = require('../../config/local.js');
+    }
+    catch (e) {
+    }
+
+    if (local == null) {
+      // Mail is disabled, no activation required
+      User.update({
+        email: user.email
+      }, {
+        activation_token: 'activated',
+        tos: true
+      }, function (err, user) {
+        console.error(err);
+      });
+      return {status: 'logged'};
+    }
     var nodemailer = require('nodemailer');
     var transporter = nodemailer.createTransport(local.nodemailer.transport);
 
@@ -50,7 +69,7 @@ module.exports = {
         return {status: 'error', error: err};
       }
       else {
-        return {status: 'ok'};
+        return {status: 'activate'};
       }
     });
 
