@@ -47,7 +47,7 @@ exports.register = function (req, res, next) {
     username         : username
   , email            : email
   , rank             : 'basic'
-  , activation_token : User.generateActivationToken()
+  , activation_token : ActivationService.generateActivationToken()
   }, function (err, user) {
     if (err) {
       if (err.code === 'E_VALIDATION') {
@@ -80,7 +80,7 @@ exports.register = function (req, res, next) {
         });
       }
 
-      var response = User.sendActivationEmail(user);
+      var response = ActivationService.sendActivationEmail(user);
 
       if (response.status != 'ok') {
         return next(response.error);

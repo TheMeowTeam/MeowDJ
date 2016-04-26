@@ -102,7 +102,7 @@ module.exports = {
       return res.redirect('/');
     }
 
-    var response = User.sendActivationEmail(req.session.user);
+    var response = ActivationService.sendActivationEmail(req.session.user);
 
     if (response.status != 'logged' || response.status != 'activation') {
       req.flash('error', response.error);

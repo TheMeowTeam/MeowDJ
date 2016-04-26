@@ -97,7 +97,7 @@ passport.connect = function (req, query, profile, next) {
   }
 
   user.rank = 'basic';
-  user.activation_token = User.generateActivationToken();
+  user.activation_token = ActivationService.generateActivationToken();
 
   Passport.findOne({
     provider   : provider
@@ -134,7 +134,7 @@ passport.connect = function (req, query, profile, next) {
               return next(err);
             }
 
-            var response = User.sendActivationEmail(user);
+            var response = ActivationService.sendActivationEmail(user);
 
             if (response.status != 'ok') {
               return next(response.error);
