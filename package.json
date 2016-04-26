@@ -1,6 +1,6 @@
 {
   "name": "MeowDJ",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A room-based music sharing provider in Node.js",
   "keywords": [],
   "dependencies": {
@@ -20,16 +20,15 @@
     "jade": "^1.11.0",
     "nodemailer": "^2.0.0",
     "passport": "^0.3.2",
-    "passport-facebook": "^2.0.0",
-    "passport-google-oauth": "^0.2.0",
+    "passport-facebook": "^2.1.0",
+    "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
-    "passport-twitter": "^1.0.3",
+    "passport-twitter": "^1.0.4",
     "sails": "~0.12.3",
     "sails-disk": "~0.10.0",
-    "sails-generate-auth": "^0.3.1",
     "sails-mysql": "^0.11.2",
-    "socket.io": "^1.4.4",
-    "validator": "^4.5.0"
+    "socket.io": "^1.4.5",
+    "validator": "^5.2.0"
   },
   "scripts": {
     "debug": "node debug app.js",
@@ -44,8 +43,8 @@
     "url": "http://github.com/MeowDJ/MeowDJ/issues"
   },
   "engines": {
-    "node": ">= 0.10.0",
-    "npm": ">= 1.4.0"
+    "node": ">= 4.4.3",
+    "npm": ">= 2.15.1"
   },
   "author": "Jérémy L. & Thomas G.",
   "license": "CECILL-B"
