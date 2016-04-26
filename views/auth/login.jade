@@ -1,22 +1,20 @@
 extends ../layout.jade
 
 block body
-  if data.error
-    each error in data.error
-      p
-        b #{error}
+  div.centered.align-center.primary-color
+    img.center(src='/images/logo.png')
+    if data.error
+      each error in data.error
+        p(style = "color: red;") #{error}
+    h2(style = "margin: 0 0 1.5% 0;") Login
+    form(action = '/auth/local', method = 'post')
+      input.primary-background.underline.space(type = 'text', name = 'identifier', placeholder = 'Username or Email', required)
+      input.primary-background.underline.large-space(type = 'password', name = 'password', placeholder = 'Password', required)
+      a.btn.btn-blue(onclick="$(this).closest('form').submit()") Sign in
 
-  h1 Login
-
-  form(action = '/auth/local', method = 'post')
-    input(type = 'text', name = 'identifier', placeholder = 'Username or Email', required)
-    input(type = 'password', name = 'password', placeholder = 'Password', required)
-    button(type = 'submit') Sign in
-
-  h1 Register
-
-  form(action = '/auth/local/register', method = 'post')
-    input(type = 'text', name = 'username', placeholder = 'Username or Email', required)
-    input(type = 'text', name = 'email', placeholder = 'Email', required)
-    input(type = 'password', name = 'password', placeholder = 'Password', required)
-    button(type = 'submit') Sign up
+    h2(style = "margin: 10% 0 1.5% 0;") Register
+    form(action = '/auth/local/register', method = 'post')
+      input.primary-background.underline(type = 'text', name = 'username', placeholder = 'Username', required)
+      input.primary-background.underline(type = 'text', name = 'email', placeholder = 'Email', required, style = "margin: 5% 0 5% 0;")
+      input.primary-background.underline.large-space(type = 'password', name = 'password', placeholder = 'Password', required)
+      a.btn.btn-blue(onclick="$(this).closest('form').submit()") Sign up

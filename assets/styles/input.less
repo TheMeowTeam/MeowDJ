@@ -1,0 +1,64 @@
+.input-group {
+  position: relative;
+  display: table;
+  border-collapse: separate;
+}
+
+.input-group .form-control {
+  position: relative;
+  z-index: 2;
+  float: left;
+  width: 100%;
+  padding: .4em 0.25em;
+  margin-bottom: 0;
+}
+
+.input-group-btn {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  font-size: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+  display: table-cell;
+}
+
+.form-control {
+  border-radius: 0;
+}
+
+input[type="text"], input[type="password"] {
+  display: block;
+  margin: 0;
+  width: 100%;
+  font-family: sans-serif;
+  font-size: 18px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: 0px;
+  color: #E4D7C6;
+}
+input[type="text"]:focus, input[type="password"]:focus {
+  outline: none;
+}
+
+input[type="text"].underline, input[type="password"].underline  {
+  padding: 4px;
+  border: none;
+  transition: border 0.3s;
+  border-bottom: transparent;
+  margin: 0 0 0.5em 0;
+}
+
+input[type="text"].underline.space, input[type="password"].space {
+  margin: 0 0 3% 0;
+}
+
+input[type="text"].underline.large-space, input[type="password"].large-space {
+  margin: 0 0 5% 0;
+}
+
+input[type="text"].underline:focus, input[type="password"].underline:focus,
+input[type="text"].underline.focus, input[type="password"].underline.focus {
+  border-bottom: solid 2px #746290;
+}

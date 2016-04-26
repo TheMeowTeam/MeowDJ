@@ -1,13 +1,13 @@
 extends ../layout.jade
 
 block body
-  h1 Create a room
-
-  if data.error
-    each error in data.error
-      p
-        b #{error}
-
-  form(action = '/create', method = 'post')
-    input(type = 'text', name = 'name', placeholder = 'Name of the room', required)
-    button(type = 'submit') Create
+  div.centered.align-center.primary-color
+    img.center(src='/images/logo.png')
+    h2 Create a room
+    if data.error
+      p(style = "color: red;") #{data.error}
+      a.btn.btn-blue(href = "/" + data.go) Join my room!
+    else
+      form(action = '/create', method = 'post')
+        input.underline.primary-background(type = 'text', name = 'name', placeholder = 'Name of the room', required)
+        a.btn.btn-blue(onclick="$(this).closest('form').submit()") Create

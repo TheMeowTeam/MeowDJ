@@ -30,6 +30,7 @@ module.exports = {
 
       if (room) {
         data.error = 'ALREADY_HAVE_ROOM';
+        data.go = room.identifier;
       }
 
       return res.view('room/create', {data: data});

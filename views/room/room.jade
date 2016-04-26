@@ -5,7 +5,7 @@ block preInit
 
 block body
   div.wrapper
-    h2 I'm the room #{data.room.name}!
+    h2.primary-color I'm the room #{data.room.name}!
     div#player
 
   div.chat
@@ -13,6 +13,6 @@ block body
 
     form(action = '')
       div.input-group
-        input.form-control(id = "message", type = "text", placeholder = "Message...", autocomplete = "off")
+        input.underline.primary-color.secondary-background(id = "message", type = "text", placeholder = "Message...", autocomplete = "off")
         span.input-group-btn
-          button.btn.btn-default >
+          a.btn.btn-chat(onclick="$(this).closest('form').submit()") >
