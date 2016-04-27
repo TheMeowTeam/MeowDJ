@@ -78,6 +78,7 @@ module.exports.routes = {
   'get /:room': { controller: 'RoomController', action: 'enter' },
     'post /:room/subscribe': { controller: 'RoomController', action: 'subscribe' },
     'post /:room/chat': { controller: 'RoomController', action: 'chat' },
+    'post /:room/playlist/add': {controller: 'RoomController', action: 'addToWaitingQueue'},
     'post /:room/configuration': { controller: 'RoomController', action: 'processConfiguration' }
 
   /***************************************************************************

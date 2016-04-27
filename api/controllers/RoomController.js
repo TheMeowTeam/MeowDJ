@@ -38,7 +38,6 @@ module.exports = {
   },
 
 
-
   /**
    * `RoomController.processCreate()`
    *
@@ -79,7 +78,6 @@ module.exports = {
   },
 
 
-
   /**
    * `RoomController.enter()`
    *
@@ -111,7 +109,6 @@ module.exports = {
   },
 
 
-
   /**
    * `RoomController.subscribe()`
    *
@@ -122,8 +119,8 @@ module.exports = {
     var roomId = req.param('roomId');
 
     Room.findOne({
-        identifier: roomId
-      }, function (err, room) {
+      identifier: roomId
+    }, function (err, room) {
 
       if (err || !room) {
         return res.json({result: 'error'});
@@ -147,6 +144,32 @@ module.exports = {
           data: playerData
         }
       });
+    });
+  },
+
+  addToWaitingQueue: function (req, res) {
+    var roomId = req.param('roomId');
+
+    playerData = {
+      'videoId': 'XoyO7rQBmdQ',
+      'startSeconds': 5,
+      'suggestedQuality': 'large'
+    }; // TODO: Make the queue system
+
+    Room.findOne({
+      identifier: roomId
+    }, function (err, room) {
+
+      if (err || !room) {
+        return res.json({result: 'error'});
+      }
+      sails.sockets.broadcast(roomId, 'playlist/update', {
+        player: {
+          type: "yt",
+          data: playerData
+        }
+      });
+      return res.json({result: 'ok'})
     });
   },
 
@@ -178,7 +201,6 @@ module.exports = {
       return res.json({result: 'ok'});
     });
   },
-
 
 
   /**

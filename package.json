@@ -27,11 +27,12 @@
     "sails-disk": "~0.10.0",
     "sails-mysql": "^0.12.1",
     "socket.io": "^1.4.5",
-    "validator": "^5.2.0"
+    "validator": "^5.2.0",
+    "googleapis": "^5.2.1"
   },
   "scripts": {
     "debug": "node debug app.js",
-    "start": "node app.js"
+    "start": "node app.js --port=80"
   },
   "main": "app.js",
   "repository": {

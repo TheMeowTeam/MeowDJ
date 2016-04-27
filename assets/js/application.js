@@ -34,6 +34,18 @@ function Room() {
       subscribeResponse = response;
 
       initializeChat(response);
+      $('.playlist form').submit(function () {
+        var textbox = $('#url');
+
+        if (!textbox.val())
+          return false
+        io.socket.post('/' + room.identifier + '/playlist/add', {
+          roomId: room.identifier,
+          url: textbox.val()
+        })
+        textbox.val('');
+        return false;
+      });
     });
 
     initialized = true;
@@ -44,11 +56,12 @@ function Room() {
    */
   function initializePlayer(player) {
 
-    loadPlayerForContent(player, subscribeResponse.player);
+    //loadPlayerForContent(player, subscribeResponse.player);
 
     // FIXME: May produce error if player is undefined
-    io.socket.on('playlistChanges', function (data) {
-      loadPlayerForContent(player, data)
+    io.socket.on('playlist/update', function (data) {
+      console.dir(data)
+      loadPlayerForContent(player, data.player)
     });
   }
 
@@ -84,11 +97,9 @@ function Room() {
    * Load a given Youtube video ID on the player
    */
   function loadPlayerForContent(player, playerData) {
-
     if (playerData.type == "yt") {
       player.loadVideoById(playerData.data);
     }
-
   }
 
   /**
