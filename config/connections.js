@@ -23,7 +23,7 @@ function generateConnectionsConfiguration(conf) {
 
   var config = Object.create(null);
 
-  if (conf != null) {
+  if (conf != null && conf.database != null) {
     config['default'] = {
       adapter: 'sails-mysql',
       host: conf.database.host,

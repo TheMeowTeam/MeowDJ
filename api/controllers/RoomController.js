@@ -149,6 +149,8 @@ module.exports = {
 
   addToWaitingQueue: function (req, res) {
     var roomId = req.param('roomId');
+    var url = req.param('url');
+    var user = req.session.user;
 
     playerData = {
       'videoId': 'XoyO7rQBmdQ',
@@ -163,13 +165,39 @@ module.exports = {
       if (err || !room) {
         return res.json({result: 'error'});
       }
-      sails.sockets.broadcast(roomId, 'playlist/update', {
-        player: {
-          type: "yt",
-          data: playerData
+      var contentID = YoutubeAPI.getVideoID(url);
+
+      // TODO: Soundcloud integration
+      if (contentID == null)
+        return res.json({result: 'error', reason: 'INVALID_CONTENT_TYPE'})
+
+
+      // Caching system search
+      YoutubeCache.findOne({id: contentID}, function (err, cacheEntry) {
+        // Entry not found, cache need to be generated
+        if (err || !cacheEntry)
+        {
+          YoutubeAPI.fetchVideoData(contentID, function (err, data) {
+            if (err)
+              sails.log.warn("Error during data YTv3 API data fetching: " + JSON.stringify(err))
+            else
+            {
+              var item = data.items[0];
+              YoutubeCache.create({id: item.id, channelID: item.snippet.channelId, channelTitle: item.snippet.channelTitle,  title: item.snippet.title, duration: YoutubeAPI.convertDuration(item.contentDetails.duration), licensedContent: item.contentDetails.licensedContent}, function (err) {
+                if (err)
+                  sails.log.warn("Error during data YTv3 API data caching: " + JSON.stringify(err))
+              })
+            }
+          })
+          sails.log.debug(contentID)
         }
-      });
-      return res.json({result: 'ok'})
+        else
+        {
+          console.dir(cacheEntry);
+        }
+
+        return res.json({result: 'ok'})
+      })
     });
   },
 
