@@ -5,6 +5,7 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 module.exports = {
+  migrate: 'drop',
   attributes: {
     roomID: {type: 'string', required: true},
     userID: {type: 'integer', required: true},

@@ -5,6 +5,20 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+function processAddWaitingQueue (roomID, user, data, type)
+{
+  WaitingQueue.create({roomID: roomID, userID: user.id, type: type, cacheID: data.id}, function(err)
+  {
+    if (err)
+      sails.log.warn("Error during adding to waiting queue " + JSON.stringify(err))
+
+    if (!ActiveMediaService.isPlaying(roomID))
+    {
+      ActiveMediaService.nextMedia(roomID);
+    }
+  });
+}
+
 module.exports = {
 
 
@@ -85,7 +99,7 @@ module.exports = {
    */
   enter: function (req, res) {
 
-    var roomId = req.param('room').toLowerCase();
+    var roomId = req.param('room');
 
     Room.findOne({
       identifier: roomId
@@ -128,21 +142,10 @@ module.exports = {
 
       sails.sockets.join(req.socket, roomId);
 
-      playerData = {
-        'videoId': 'XoyO7rQBmdQ',
-        'startSeconds': 5,
-        'suggestedQuality': 'large'
-      }; // TODO: Make the queue system
-
       return res.json({
         result: 'ok',
-
         motd: room.motd,
-
-        player: {
-          type: "yt",
-          data: playerData
-        }
+        media: ActiveMediaService.isPlaying(roomId) ? ActiveMediaService.getMedia(roomId).content : null
       });
     });
   },
@@ -152,12 +155,6 @@ module.exports = {
     var url = req.param('url');
     var user = req.session.user;
 
-    playerData = {
-      'videoId': 'XoyO7rQBmdQ',
-      'startSeconds': 5,
-      'suggestedQuality': 'large'
-    }; // TODO: Make the queue system
-
     Room.findOne({
       identifier: roomId
     }, function (err, room) {
@@ -166,34 +163,34 @@ module.exports = {
         return res.json({result: 'error'});
       }
       var contentID = YoutubeAPI.getVideoID(url);
-
+      
       // TODO: Soundcloud integration
       if (contentID == null)
         return res.json({result: 'error', reason: 'INVALID_CONTENT_TYPE'})
 
 
       // Caching system search
-      YoutubeCache.findOne({id: contentID}, function (err, cacheEntry) {
+      YoutubeCache.findOne({contentID: contentID}, function (err, cacheEntry) {
         // Entry not found, cache need to be generated
         if (err || !cacheEntry)
         {
           YoutubeAPI.fetchVideoData(contentID, function (err, data) {
             if (err)
-              sails.log.warn("Error during data YTv3 API data fetching: " + JSON.stringify(err))
+              sails.log.warn("Error during YTv3 API data fetching: " + JSON.stringify(err))
             else
             {
               var item = data.items[0];
-              YoutubeCache.create({id: item.id, channelID: item.snippet.channelId, channelTitle: item.snippet.channelTitle,  title: item.snippet.title, duration: YoutubeAPI.convertDuration(item.contentDetails.duration), licensedContent: item.contentDetails.licensedContent}, function (err) {
+              YoutubeCache.create({contentID: item.id, channelID: item.snippet.channelId, channelTitle: item.snippet.channelTitle,  title: item.snippet.title, duration: YoutubeAPI.convertDuration(item.contentDetails.duration), licensedContent: item.contentDetails.licensedContent}, function (err, data) {
                 if (err)
-                  sails.log.warn("Error during data YTv3 API data caching: " + JSON.stringify(err))
+                  sails.log.warn("Error during YTv3 API data caching: " + JSON.stringify(err))
+                processAddWaitingQueue(roomId, user, data, 'youtube');
               })
             }
           })
-          sails.log.debug(contentID)
         }
         else
         {
-          console.dir(cacheEntry);
+          processAddWaitingQueue(roomId, user, cacheEntry, 'youtube');
         }
 
         return res.json({result: 'ok'})

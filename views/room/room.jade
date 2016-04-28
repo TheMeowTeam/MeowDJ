@@ -1,18 +1,22 @@
 extends ../layout.jade
 
 block preInit
+  script(src='/js/dependencies/sails.io.js')
+  script(src='/js/application.js')
   script(src="https://www.youtube.com/iframe_api")
 
 block body
   div.wrapper
-    h2.primary-color I'm the room #{data.room.name}!
-    div#player
-    h2.primary-color Add to waiting room:
-    div.input-group
-      div.playlist
-        form(action = '')
-          input.underline.primary-color.primary-background(id = "url", type = "text", placeholder = "URL", autocomplete = "off")
-          a.btn.btn-chat(onclick="$(this).closest('form').submit()") >
+    div.centered
+      h2.primary-color I'm the room #{data.room.name}!
+      h3.timer.primary-color ??? / ???
+      div#player
+      h2.primary-color Add to waiting room:
+      div.input-group
+        div.playlist
+          form(action = '')
+            input.underline.primary-color.primary-background(id = "url", type = "text", placeholder = "URL", autocomplete = "off")
+            a.btn.btn-chat(onclick="$(this).closest('form').submit()") >
 
   div.chat
     ul.messages

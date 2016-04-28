@@ -1,3 +1,9 @@
+if (!Date.now) {
+  Date.now = function () {
+    return new Date().getTime();
+  }
+}
+
 var room;
 var player;
 
@@ -10,6 +16,8 @@ function Room() {
   var messages = $('.chat .messages');
   var subscribeResponse = null;
   var initialized = false;
+  var timer = null;
+  var mediaData = null;
 
   this.initialize = initialize;
   this.initializePlayer = initializePlayer;
@@ -56,12 +64,11 @@ function Room() {
    */
   function initializePlayer(player) {
 
-    //loadPlayerForContent(player, subscribeResponse.player);
+    if (subscribeResponse.media != null)
+      loadPlayerForContent(player, subscribeResponse.media);
 
-    // FIXME: May produce error if player is undefined
-    io.socket.on('playlist/update', function (data) {
-      console.dir(data)
-      loadPlayerForContent(player, data.player)
+    io.socket.on('media/update', function (data) {
+      loadPlayerForContent(player, data)
     });
   }
 
@@ -93,12 +100,52 @@ function Room() {
     writeChatMessage(room.name, response.motd);
   }
 
+  function getTime(totalSeconds)
+  {
+    hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    minutes = Math.floor(totalSeconds / 60);
+    seconds = totalSeconds % 60;
+    var result = "";
+    if (hours != 0)
+      result += (hours < 10 ? "0" + hours : hours) + ":";
+    result += (minutes < 10 ? "0" + minutes : minutes);
+    result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+
+    return result;
+  }
+
   /**
    * Load a given Youtube video ID on the player
    */
-  function loadPlayerForContent(player, playerData) {
-    if (playerData.type == "yt") {
-      player.loadVideoById(playerData.data);
+  function loadPlayerForContent(player, media) {
+    if (media == null)
+    {
+      if (timer)
+        clearInterval(timer);
+      player.loadVideoById(null);
+      $('.timer').css("color", "#E4D7C6")
+      $('.timer').text('??? / ???')
+    }
+    else if (media.type == "youtube") {
+
+      playerData = {
+        'videoId': media.contentID,
+        'startSeconds': media.duration - (media.endTime - (Date.now() / 1000 | 0)),
+        'suggestedQuality': 'large'
+      };
+      mediaData = media;
+      mediaData.pos = mediaData.duration - playerData.startSeconds;
+      if (timer)
+        clearInterval(timer);
+      timer = setInterval(function()
+      {
+        mediaData.pos--;
+        $('.timer').css("color", (mediaData.pos < 10 ? "red" : "#E4D7C6"))
+        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
+      }, 1000);
+      player.loadVideoById(playerData);
+      writeChatMessage(null, "Now playing: " + media.channelTitle + " - " + media.title)
     }
   }
 
@@ -113,7 +160,7 @@ function Room() {
       messageEntry.addClass('chat-' + style);
     }
 
-    messages.append(messageEntry.append($('<b>').text(sender + ": ")).append($('<span>').text(message)));
+    messages.append(messageEntry.append($('<b>').text(sender == null ? "" : sender + ": ")).append($('<span>').text(message)));
     messages.animate({scrollTop: $(document).height()}, "slow");
   }
 }

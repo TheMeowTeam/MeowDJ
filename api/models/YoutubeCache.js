@@ -7,7 +7,7 @@
 
 module.exports = {
   attributes: {
-    id: {type: 'string', unique: true, required: true},
+    contentID: {type: 'string', unique: true, required: true},
     channelID: {type: 'string', required: true},
     channelTitle: {type: 'string', required: true},
     title: {type: 'string', required: true},
