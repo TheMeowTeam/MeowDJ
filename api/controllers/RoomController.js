@@ -5,15 +5,12 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-function processAddWaitingQueue (roomID, user, data, type)
-{
-  WaitingQueue.create({roomID: roomID, userID: user.id, type: type, cacheID: data.id}, function(err)
-  {
+function processAddWaitingQueue(roomID, user, data, type) {
+  WaitingQueue.create({roomID: roomID, userID: user.id, cacheID: data.id}, function (err) {
     if (err)
       sails.log.warn("Error during adding to waiting queue " + JSON.stringify(err))
 
-    if (!ActiveMediaService.isPlaying(roomID))
-    {
+    if (!ActiveMediaService.isPlaying(roomID)) {
       ActiveMediaService.nextMedia(roomID);
     }
   });
@@ -143,8 +140,7 @@ module.exports = {
       sails.sockets.join(req.socket, roomId);
 
       var media = null;
-      if (ActiveMediaService.isPlaying(roomId))
-      {
+      if (ActiveMediaService.isPlaying(roomId)) {
         media = ActiveMediaService.getMedia(roomId).content;
         media.serverTime = Date.now();
       }
@@ -169,35 +165,44 @@ module.exports = {
       if (err || !room) {
         return res.json({result: 'error'});
       }
-      var contentID = YoutubeAPI.getVideoID(url);
+      var content = YoutubeAPI.getVideoID(url);
 
       // TODO: Soundcloud integration
-      if (contentID == null)
+      if (content == null)
         return res.json({result: 'error', reason: 'INVALID_CONTENT_TYPE'})
 
 
       // Caching system search
-      YoutubeCache.findOne({contentID: contentID}, function (err, cacheEntry) {
+      MediaCache.findOne({contentID: content.contentID}, function (err, cacheEntry) {
         // Entry not found, cache need to be generated
-        if (err || !cacheEntry)
-        {
-          YoutubeAPI.fetchVideoData(contentID, function (err, data) {
-            if (err)
-              sails.log.warn("Error during YTv3 API data fetching: " + JSON.stringify(err))
-            else
-            {
-              var item = data.items[0];
-              YoutubeCache.create({contentID: item.id, channelID: item.snippet.channelId, channelTitle: item.snippet.channelTitle,  title: item.snippet.title, duration: YoutubeAPI.convertDuration(item.contentDetails.duration), licensedContent: item.contentDetails.licensedContent}, function (err, data) {
-                if (err)
-                  sails.log.warn("Error during YTv3 API data caching: " + JSON.stringify(err))
-                processAddWaitingQueue(roomId, user, data, 'youtube');
-              })
-            }
-          })
+        if (err || !cacheEntry) {
+
+          if (content.type == "youtube") {
+            YoutubeAPI.fetchVideoData(content.contentID, function (err, data) {
+              if (err)
+                sails.log.warn("Error during YTv3 API data fetching: " + JSON.stringify(err))
+              else {
+                var item = data.items[0];
+                MediaCache.create({
+                  contentID: item.id,
+                  creatorID: item.snippet.channelId,
+                  creatorName: item.snippet.channelTitle,
+                  title: item.snippet.title,
+                  duration: YoutubeAPI.convertDuration(item.contentDetails.duration),
+                  licensedContent: item.contentDetails.licensedContent,
+                  url: url,
+                  type: "youtube"
+                }, function (err, data) {
+                  if (err)
+                    sails.log.warn("Error during YTv3 API data caching: " + JSON.stringify(err))
+                  processAddWaitingQueue(roomId, user, data);
+                })
+              }
+            })
+          }
         }
-        else
-        {
-          processAddWaitingQueue(roomId, user, cacheEntry, 'youtube');
+        else {
+          processAddWaitingQueue(roomId, user, cacheEntry);
         }
 
         return res.json({result: 'ok'})

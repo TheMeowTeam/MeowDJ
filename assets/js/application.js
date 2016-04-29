@@ -100,8 +100,7 @@ function Room() {
     writeChatMessage(room.name, response.motd);
   }
 
-  function getTime(totalSeconds)
-  {
+  function getTime(totalSeconds) {
     hours = Math.floor(totalSeconds / 3600);
     totalSeconds %= 3600;
     minutes = Math.floor(totalSeconds / 60);
@@ -110,7 +109,7 @@ function Room() {
     if (hours != 0)
       result += (hours < 10 ? "0" + hours : hours) + ":";
     result += (minutes < 10 ? "0" + minutes : minutes);
-    result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+    result += ":" + (seconds < 10 ? "0" + seconds : seconds);
 
     return result;
   }
@@ -119,21 +118,14 @@ function Room() {
    * Load a given Youtube video ID on the player
    */
   function loadPlayerForContent(player, media) {
-    if (media == null)
-    {
+    if (media == null) {
       if (timer)
         clearInterval(timer);
       player.loadVideoById(null);
       $('.timer').css("color", "#E4D7C6")
       $('.timer').text('??? / ???')
     }
-    else if (media.type == "youtube") {
-
-      playerData = {
-        'videoId': media.contentID,
-        'startSeconds': 0,
-        'suggestedQuality': 'large'
-      };
+    else {
       mediaData = media;
       mediaData.pos = parseInt((media.endTime - media.serverTime) / 1000);
       if (mediaData.pos < 0)
@@ -141,16 +133,24 @@ function Room() {
       mediaData.pos = mediaData.pos < 0 ? 0 : mediaData.pos;
       if (timer)
         clearInterval(timer);
-      timer = setInterval(function()
-      {
+      timer = setInterval(function () {
         mediaData.pos--;
         $('.timer').css("color", (mediaData.pos < 10 ? "red" : "#E4D7C6"))
         $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
       }, 1000);
-      player.loadVideoById(playerData);
-      player.seekTo((mediaData.duration - (media.endTime - media.serverTime) / 1000))
-      player.playVideo();
-      writeChatMessage(null, "Now playing: " + media.channelTitle + " - " + media.title)
+
+      writeChatMessage(null, "Now playing: " + media.creatorName + " - " + media.title)
+      
+      // Players controls
+      if (media.type == "youtube") {
+        player.loadVideoById({
+          'videoId': media.contentID,
+          'startSeconds': 0,
+          'suggestedQuality': 'large'
+        });
+        player.seekTo((mediaData.duration - (media.endTime - media.serverTime) / 1000))
+        player.playVideo();
+      }
     }
   }
 
