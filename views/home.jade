@@ -1,5 +1,8 @@
 extends layout.jade
 
+block preInit
+  script(src='/js/dependencies/sails.io.js')
+
 block body
   div.centered.align-center
     img.center(src='/images/logo.png')
@@ -13,4 +16,4 @@ block body
     else
       h1.primary-color Welcome to MeowDJ
       h2.primary-color Meow.dj is a room-based music sharing provider in Node.js
-      a.btn.btn-blue(href='/login') Join The Party!
+      a.btn.btn-blue#login(href='#') Join The Party!

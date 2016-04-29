@@ -26,22 +26,10 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-  '*': [ 'passport' ],
-
-  AuthController: {
-    '*': [ 'passport' ]
-  },
-
-  ActivationController: {
-    '*': [ 'passport', 'sessionAuth' ]
-  },
-
-  UserController: {
-    '*': [ 'passport', 'sessionAuth', 'activatedAccount' ]
-  },
+  '*': [],
 
   RoomController: {
-    '*': [ 'passport', 'sessionAuth', 'activatedAccount', 'finalizedAccount' ]
+    '*': [ 'sessionAuth', 'finalizedAccount' ]
   }
 
 

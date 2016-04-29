@@ -42,15 +42,19 @@ function Room() {
       subscribeResponse = response;
 
       initializeChat(response);
+
       $('.playlist form').submit(function () {
+
         var textbox = $('#url');
 
         if (!textbox.val())
-          return false
+          return false;
+
         io.socket.post('/' + room.identifier + '/playlist/add', {
           roomId: room.identifier,
           url: textbox.val()
-        })
+        });
+
         textbox.val('');
         return false;
       });
@@ -77,7 +81,8 @@ function Room() {
    */
   function initializeChat(response) {
 
-    $('.chat form').submit(function () {
+    $('.chat form').submit(function() {
+
       var textbox = $('#message');
 
       if (!textbox.val())
@@ -94,23 +99,27 @@ function Room() {
     });
 
     io.socket.on('chat', function (data) {
+
       writeChatMessage(data.username, data.message);
     });
 
     writeChatMessage(room.name, response.motd);
   }
 
-  function getTime(totalSeconds)
-  {
+  function getTime(totalSeconds) {
+
     hours = Math.floor(totalSeconds / 3600);
     totalSeconds %= 3600;
     minutes = Math.floor(totalSeconds / 60);
     seconds = totalSeconds % 60;
-    var result = "";
+
+    var result = '';
+
     if (hours != 0)
-      result += (hours < 10 ? "0" + hours : hours) + ":";
-    result += (minutes < 10 ? "0" + minutes : minutes);
-    result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+      result += (hours < 10 ? '0' + hours : hours) + ':';
+
+    result += (minutes < 10 ? '0' + minutes : minutes);
+    result += ':' + (seconds  < 10 ? '0' + seconds : seconds);
 
     return result;
   }
@@ -119,34 +128,41 @@ function Room() {
    * Load a given Youtube video ID on the player
    */
   function loadPlayerForContent(player, media) {
-    if (media == null)
-    {
+
+    if (media == null) {
+
       if (timer)
         clearInterval(timer);
+
       player.loadVideoById(null);
-      $('.timer').css("color", "#E4D7C6")
+      $('.timer').css('color', '#E4D7C6')
       $('.timer').text('??? / ???')
     }
-    else if (media.type == "youtube") {
+    else if (media.type == 'youtube') {
 
       playerData = {
         'videoId': media.contentID,
         'startSeconds': media.duration - (media.endTime - (Date.now() / 1000 | 0)),
         'suggestedQuality': 'large'
       };
+
       mediaData = media;
       mediaData.pos = mediaData.duration - playerData.startSeconds;
+
       if (timer)
         clearInterval(timer);
-      timer = setInterval(function()
-      {
+
+      timer = setInterval(function() {
+
         mediaData.pos--;
-        $('.timer').css("color", (mediaData.pos < 10 ? "red" : "#E4D7C6"))
-        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
+        $('.timer').css('color', (mediaData.pos < 10 ? 'red' : '#E4D7C6'));
+        $('.timer').text(getTime(mediaData.pos) + ' / ' + getTime(mediaData.duration));
       }, 1000);
+
       player.loadVideoById(playerData);
       player.playVideo();
-      writeChatMessage(null, "Now playing: " + media.channelTitle + " - " + media.title)
+
+      writeChatMessage(null, 'Now playing: ' + media.channelTitle + ' - ' + media.title)
     }
   }
 
@@ -161,8 +177,8 @@ function Room() {
       messageEntry.addClass('chat-' + style);
     }
 
-    messages.append(messageEntry.append($('<b>').text(sender == null ? "" : sender + ": ")).append($('<span>').text(message)));
-    messages.animate({scrollTop: $(document).height()}, "slow");
+    messages.append(messageEntry.append($('<b>').text(sender == null ? '' : sender + ': ')).append($('<span>').text(message)));
+    messages.animate({scrollTop: $(document).height()}, 'slow');
   }
 }
 
@@ -184,11 +200,13 @@ function onYouTubeIframeAPIReady() {
 
     events: {
       'onReady': function (event) {
+
         room.initializePlayer(event.target);
         event.target.playVideo();
       },
 
       'onStateChange': function (event) {
+
         if (event.data == YT.PlayerState.PAUSED) {
           event.target.playVideo();
         }
@@ -197,17 +215,55 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
-$(document).ready(function () {
+function guid() {
 
-  if (local.page == 'room') {
-    room = new Room();
-    room.initialize();
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   }
 
-  var resize = function () {
-    $('.chat .messages').css('height', $(window).height() - 34);
-  };
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
-  $(window).resize(resize);
-  resize();
+$(document).ready(function () {
+
+  if (local.page == 'home') {
+
+    var personnalGuid = guid();
+    var popup = null;
+
+    io.socket.post('/login/subscribe', {
+      guid: personnalGuid
+    }, function (response) {
+
+      if (response.result != 'ok') {
+        alert('An error occured while loading the application! Please try again later!');
+      }
+    });
+
+    io.socket.on('login-callback', function (data) {
+
+      if (popup != null)
+        popup.close();
+      
+      location.reload();
+    });
+
+    $('#login').click(function(event) {
+
+      event.preventDefault();
+      popup = window.open('http://localhost/login?guid=' + personnalGuid, 'popupWindow', 'width=400,height=600,scrollbars=yes');
+    });
+  }
+  else if (local.page == 'room') {
+
+    room = new Room();
+    room.initialize();
+
+    var resize = function () {
+      $('.chat .messages').css('height', $(window).height() - 34);
+    };
+
+    $(window).resize(resize);
+    resize();
+  }
 });

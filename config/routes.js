@@ -39,33 +39,8 @@ module.exports.routes = {
    *  Authentication
    */
 
-  'get /login': { controller: 'AuthController', action: 'login' },
-  'get /logout': { controller: 'AuthController', action: 'logout' },
-
-  'post /auth/local': { controller: 'AuthController', action: 'callback' },
-  'post /auth/local/:action': { controller: 'AuthController', action: 'callback' },
-
-  'get /auth/:provider': { controller: 'AuthController', action: 'provider' },
-    'get /auth/:provider/callback': { controller: 'AuthController', action: 'callback' },
-    'get /auth/:provider/:action': { controller: 'AuthController', action: 'callback' },
-
-
-  /**
-   *  Activation
-   */
-
-  'get /activate': { controller: 'ActivationController', action: 'activate' },
-    'post /activate': { controller: 'ActivationController', action: 'processActivate' },
-    'get /activate/:token': { controller: 'ActivationController', action: 'processActivate' },
-    'get /activate/send': { controller: 'ActivationController', action: 'sendActivationEmail' },
-
-
-  /**
-   *  User
-   */
-
-  'get /welcome': { controller: 'UserController', action: 'welcome' },
-    'post /welcome': { controller: 'UserController', action: 'processWelcome' },
+  'post /login/subscribe': { controller: 'AuthController', action: 'subscribe' },
+  'post /login/callback': { controller: 'AuthController', action: 'callback' },
 
 
   /**
@@ -78,7 +53,7 @@ module.exports.routes = {
   'get /:room': { controller: 'RoomController', action: 'enter' },
     'post /:room/subscribe': { controller: 'RoomController', action: 'subscribe' },
     'post /:room/chat': { controller: 'RoomController', action: 'chat' },
-    'post /:room/playlist/add': {controller: 'RoomController', action: 'addToWaitingQueue'},
+    'post /:room/playlist/add': { controller: 'RoomController', action: 'addToWaitingQueue' },
     'post /:room/configuration': { controller: 'RoomController', action: 'processConfiguration' }
 
   /***************************************************************************
