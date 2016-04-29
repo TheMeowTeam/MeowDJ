@@ -116,3 +116,7 @@ npm-debug.log
 nbproject
 .idea
 .node_history
+
+assets/images
+assets/styles
+assets/favicon.ico
