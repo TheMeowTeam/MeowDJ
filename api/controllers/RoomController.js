@@ -142,10 +142,17 @@ module.exports = {
 
       sails.sockets.join(req.socket, roomId);
 
+      var media = null;
+      if (ActiveMediaService.isPlaying(roomId))
+      {
+        media = ActiveMediaService.getMedia(roomId).content;
+        media.serverTime = Date.now();
+      }
+
       return res.json({
         result: 'ok',
         motd: room.motd,
-        media: ActiveMediaService.isPlaying(roomId) ? ActiveMediaService.getMedia(roomId).content : null
+        media: media
       });
     });
   },
@@ -163,7 +170,7 @@ module.exports = {
         return res.json({result: 'error'});
       }
       var contentID = YoutubeAPI.getVideoID(url);
-      
+
       // TODO: Soundcloud integration
       if (contentID == null)
         return res.json({result: 'error', reason: 'INVALID_CONTENT_TYPE'})

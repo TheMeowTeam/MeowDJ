@@ -8,6 +8,8 @@ function getMedia(roomID) {
 }
 
 function sendPlayUpdate(channel, activeMediaData) {
+  if (activeMediaData.content)
+    activeMediaData.content.serverTime = Date.now();
   sails.sockets.broadcast(channel, 'media/update', activeMediaData.content);
 }
 
@@ -22,7 +24,7 @@ function changeMedia(roomID, content, type) {
   else sails.activeMedia[roomID] = []
   content.type = type;
   sails.activeMedia[roomID].content = content;
-  sails.activeMedia[roomID].content.endTime = ((Date.now() + (content.duration * 1000)));
+  sails.activeMedia[roomID].content.endTime = ((sails.activeMedia[roomID].content.startTime + (content.duration * 1000)));
   sails.activeMedia[roomID].task = setTimeout(function () {
     nextMedia(roomID);
   }, content.duration * 1000);

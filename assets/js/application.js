@@ -135,7 +135,7 @@ function Room() {
         'suggestedQuality': 'large'
       };
       mediaData = media;
-      mediaData.pos = parseInt((media.endTime - (Date.now())) / 1000);
+      mediaData.pos = parseInt((media.endTime - media.serverTime) / 1000);
       if (timer)
         clearInterval(timer);
       timer = setInterval(function()
@@ -145,7 +145,7 @@ function Room() {
         $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
       }, 1000);
       player.loadVideoById(playerData);
-      player.seekTo((mediaData.duration - (media.endTime - (Date.now())) / 1000))
+      player.seekTo((mediaData.duration - (media.endTime - media.serverTime) / 1000))
       player.playVideo();
       writeChatMessage(null, "Now playing: " + media.channelTitle + " - " + media.title)
     }
