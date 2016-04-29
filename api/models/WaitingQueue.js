@@ -6,6 +6,7 @@
  */
 module.exports = {
   migrate: 'drop',
+  autoUpdatedAt: false,
   attributes: {
     roomID: {type: 'string', required: true},
     userID: {type: 'integer', required: true},

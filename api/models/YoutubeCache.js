@@ -6,6 +6,8 @@
  */
 
 module.exports = {
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
   attributes: {
     contentID: {type: 'string', unique: true, required: true},
     channelID: {type: 'string', required: true},
