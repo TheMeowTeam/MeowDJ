@@ -136,6 +136,9 @@ function Room() {
       };
       mediaData = media;
       mediaData.pos = parseInt((media.endTime - media.serverTime) / 1000);
+      if (mediaData.pos < 0)
+        console.warn("Media data position < 0 (" + mediaData.pos + ")")
+      mediaData.pos = mediaData.pos < 0 ? 0 : mediaData.pos;
       if (timer)
         clearInterval(timer);
       timer = setInterval(function()
