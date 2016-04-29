@@ -120,3 +120,6 @@ nbproject
 assets/images
 assets/styles
 assets/favicon.ico
+
+!assets/styles/custom.less
+!assets/styles/pages
