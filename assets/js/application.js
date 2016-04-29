@@ -6,7 +6,7 @@ if (!Date.now) {
 
 var room;
 var player;
-var volume = 0;
+var volume = 100;
 
 /**
  * Room class
