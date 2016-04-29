@@ -145,6 +145,7 @@ function Room() {
         $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
       }, 1000);
       player.loadVideoById(playerData);
+      player.playVideo();
       writeChatMessage(null, "Now playing: " + media.channelTitle + " - " + media.title)
     }
   }
