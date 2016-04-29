@@ -6,6 +6,7 @@ if (!Date.now) {
 
 var room;
 var player;
+var volume = 0;
 
 /**
  * Room class
@@ -42,7 +43,18 @@ function Room() {
       subscribeResponse = response;
 
       initializeChat(response);
-      $('.playlist form').submit(function () {
+
+      $('.media-select').click(function () {
+        $('#media-queue').css("display", "table");
+      });
+      $('.volume').change( function() {
+        var newValue = this.value;
+        $('.volume-label').text(newValue + "%");
+        volume = newValue;
+        if (player != null)
+          player.setVolume(volume);
+      });
+      $('#media-queue form').submit(function () {
         var textbox = $('#url');
 
         if (!textbox.val())
@@ -52,6 +64,7 @@ function Room() {
           url: textbox.val()
         })
         textbox.val('');
+        $('#media-queue').css("display", "none");
         return false;
       });
     });
@@ -77,7 +90,7 @@ function Room() {
    */
   function initializeChat(response) {
 
-    $('.chat form').submit(function () {
+    $('.chat-box form').submit(function () {
       var textbox = $('#message');
 
       if (!textbox.val())
@@ -124,6 +137,7 @@ function Room() {
       player.loadVideoById(null);
       $('.timer').css("color", "#E4D7C6")
       $('.timer').text('??? / ???')
+      $('.playing').text("Nobody is playing !")
     }
     else {
       mediaData = media;
@@ -139,8 +153,10 @@ function Room() {
         $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
       }, 1000);
 
+      $('.playing').text(media.creatorName + " - " + media.title)
+      $('.dj-name').text("Not implemented")
       writeChatMessage(null, "Now playing: " + media.creatorName + " - " + media.title)
-      
+
       // Players controls
       if (media.type == "youtube") {
         player.loadVideoById({
