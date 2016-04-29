@@ -30,7 +30,7 @@ function changeMedia(roomID, content, type) {
 }
 
 function nextMedia(roomID) {
-  WaitingQueue.find().sort({createdAt: 'asc'}).limit(1).exec(function (err, data) {
+  WaitingQueue.find({roomID: roomID}).sort({createdAt: 'asc'}).limit(1).exec(function (err, data) {
     if (err)
       sails.log.warn("Error during fetching of next active media! " + JSON.stringify(err))
 
