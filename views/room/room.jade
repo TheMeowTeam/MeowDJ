@@ -3,7 +3,6 @@ extends ../layout.jade
 block preInit
   script(src='/js/dependencies/sails.io.js')
   script(src='/js/application.js')
-  script(src="https://www.youtube.com/iframe_api")
 
 block body
   nav.topbar
@@ -38,3 +37,6 @@ block body
             p(style="margin-bottom: 15px") Media URL to add to waiting list:
             form(onsubmit='/')
               input.text(id='url', type='text', placeholder='URL', autocomplete='off')
+
+block postInit
+  script(src="https://www.youtube.com/iframe_api")

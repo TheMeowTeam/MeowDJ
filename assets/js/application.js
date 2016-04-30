@@ -22,6 +22,7 @@ function Room() {
 
   this.initialize = initialize;
   this.initializePlayer = initializePlayer;
+  this.loadPlayerForContent = loadPlayerForContent;
 
   /**
    * Initialize room's components
@@ -41,8 +42,10 @@ function Room() {
       }
 
       subscribeResponse = response;
+      this.subscribeResponse = subscribeResponse;
 
       initializeChat(response);
+      initializePlayer();
 
       $('.media-select').click(function () {
         $('#media-queue').css("display", "table");
@@ -75,9 +78,14 @@ function Room() {
         $('#media-queue').css("display", "none");
         return false;
       });
+      loadPlayerForContent(response.media)
     });
-
     initialized = true;
+  }
+
+  function fetchSubResponse() {
+    var response = subscribeResponse;
+    return response;
   }
 
   /**
@@ -85,11 +93,8 @@ function Room() {
    */
   function initializePlayer(player) {
 
-    if (subscribeResponse.media != null)
-      loadPlayerForContent(player, subscribeResponse.media);
-
     io.socket.on('media/update', function (data) {
-      loadPlayerForContent(player, data)
+      loadPlayerForContent(data)
     });
   }
 
@@ -138,19 +143,20 @@ function Room() {
   /**
    * Load a given Youtube video ID on the player
    */
-  function loadPlayerForContent(player, media) {
+  function loadPlayerForContent(media) {
     if (media == null) {
       if (timer)
         clearInterval(timer);
-      player.loadVideoById(null);
+
       $('.timer').css("color", "#E4D7C6")
       $('.timer').text('??? / ???')
       $('.playing').text("Nobody is playing !")
       $('.dj-name').text("")
+      destroyYTPlayer();
     }
     else {
       mediaData = media;
-      mediaData.pos = parseInt((media.endTime - media.serverTime) / 1000);
+      mediaData.pos = parseInt((media.endTime - Date.now()) / 1000);
       if (mediaData.pos < 0)
         console.warn("Media data position < 0 (" + mediaData.pos + ")")
       mediaData.pos = mediaData.pos < 0 ? 0 : mediaData.pos;
@@ -168,14 +174,17 @@ function Room() {
 
       // Players controls
       if (media.type == "youtube") {
-        player.loadVideoById({
-          'videoId': media.contentID,
-          'startSeconds': 0,
-          'suggestedQuality': 'large'
-        });
-        player.seekTo((mediaData.duration - (media.endTime - media.serverTime) / 1000))
-        player.playVideo();
+        createYTPlayer(function (player) {
+          player.loadVideoById({
+            'videoId': media.contentID,
+            'startSeconds': 0,
+            'suggestedQuality': 'large'
+          });
+          player.seekTo((mediaData.duration - (media.endTime - Date.now()) / 1000))
+          player.playVideo();
+        })
       }
+      else destroyYTPlayer();
     }
   }
 
@@ -195,8 +204,14 @@ function Room() {
   }
 }
 
-function onYouTubeIframeAPIReady() {
+function destroyYTPlayer() {
+  if (player != null)
+    player.destroy();
+  player = null;
+}
 
+function createYTPlayer(onReady) {
+  if (player) return onReady(player); // PLAYER exist
   player = new YT.Player('player', {
     height: '390',
     width: '640',
@@ -213,10 +228,8 @@ function onYouTubeIframeAPIReady() {
 
     events: {
       'onReady': function (event) {
-        room.initializePlayer(event.target);
-        event.target.playVideo();
+        onReady(event.target)
       },
-
       'onStateChange': function (event) {
         if (event.data == YT.PlayerState.PAUSED) {
           event.target.playVideo();
@@ -240,3 +253,7 @@ $(document).ready(function () {
   $(window).resize(resize);
   resize();
 });
+
+function onYouTubeIframeAPIReady() {
+  room.ytAPIReady = true;
+}

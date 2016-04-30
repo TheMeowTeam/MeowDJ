@@ -140,10 +140,7 @@ module.exports = {
       sails.sockets.join(req.socket, roomId);
 
       var media = null;
-      if (ActiveMediaService.isPlaying(roomId)) {
-        media = ActiveMediaService.getMedia(roomId).content;
-        media.serverTime = Date.now();
-      }
+      if (ActiveMediaService.isPlaying(roomId)) media = ActiveMediaService.getMedia(roomId).content;
 
       return res.json({
         result: 'ok',
