@@ -19,7 +19,7 @@ module.exports = {
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
 
-  port: 1338,
+  port: 1337,
   explicitHost: 'auth.dj.blueslime.fr',
 
   ssl: {
