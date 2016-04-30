@@ -8,6 +8,8 @@ function getMedia(roomID) {
 }
 
 function sendPlayUpdate(channel, activeMediaData) {
+  if (activeMediaData.content != null)
+    activeMediaData.content.serverTime = Date.now();
   sails.sockets.broadcast(channel, 'media/update', activeMediaData.content);
 }
 

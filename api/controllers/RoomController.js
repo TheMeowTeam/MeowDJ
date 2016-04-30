@@ -140,7 +140,10 @@ module.exports = {
       sails.sockets.join(req.socket, roomId);
 
       var media = null;
-      if (ActiveMediaService.isPlaying(roomId)) media = ActiveMediaService.getMedia(roomId).content;
+      if (ActiveMediaService.isPlaying(roomId)) {
+        media = ActiveMediaService.getMedia(roomId).content;
+        media.serverTime = Date.now();
+      }
 
       return res.json({
         result: 'ok',
@@ -180,12 +183,17 @@ module.exports = {
                 sails.log.warn("Error during YTv3 API data fetching: " + JSON.stringify(err))
               else {
                 var item = data.items[0];
+                var duration = YoutubeAPI.convertDuration(item.contentDetails.duration);
+                if (duration == -1) {
+                  sails.log.warn("Duration invalid for mediaID " + content.contentID);
+                  return;
+                }
                 MediaCache.create({
                   contentID: item.id,
                   creatorID: item.snippet.channelId,
                   creatorName: item.snippet.channelTitle,
                   title: item.snippet.title,
-                  duration: YoutubeAPI.convertDuration(item.contentDetails.duration),
+                  duration: duration,
                   licensedContent: item.contentDetails.licensedContent,
                   url: url,
                   type: "youtube"
