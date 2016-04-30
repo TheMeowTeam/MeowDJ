@@ -5,7 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-function processAddWaitingQueue(roomID, user, data, type) {
+function processAddWaitingQueue(roomID, user, data) {
   WaitingQueue.create({roomID: roomID, userID: user.id, cacheID: data.id}, function (err) {
     if (err)
       sails.log.warn("Error during adding to waiting queue " + JSON.stringify(err))

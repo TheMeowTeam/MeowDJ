@@ -47,12 +47,20 @@ function Room() {
       $('.media-select').click(function () {
         $('#media-queue').css("display", "table");
       });
-      $('.volume').change( function() {
+      $('.volume').change(function () {
         var newValue = this.value;
         $('.volume-label').text(newValue + "%");
         volume = newValue;
         if (player != null)
           player.setVolume(volume);
+      });
+
+      $(document).keypress(function (event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+
+        // Force quit the modal
+        if (keycode == 27)
+          $('#media-queue').css("display", "none")
       });
       $('#media-queue form').submit(function () {
         var textbox = $('#url');
@@ -138,6 +146,7 @@ function Room() {
       $('.timer').css("color", "#E4D7C6")
       $('.timer').text('??? / ???')
       $('.playing').text("Nobody is playing !")
+      $('.dj-name').text("")
     }
     else {
       mediaData = media;
@@ -154,7 +163,7 @@ function Room() {
       }, 1000);
 
       $('.playing').text(media.creatorName + " - " + media.title)
-      $('.dj-name').text("Not implemented")
+      $('.dj-name').text("Current DJ: " + media.djName)
       writeChatMessage(null, "Now playing: " + media.creatorName + " - " + media.title)
 
       // Players controls

@@ -53,7 +53,14 @@ function nextMedia(roomID) {
       if (err || !cacheEntry)
         sails.log.error("Invalid cache entry " + data.cacheID + "! Is your metadata cache corrupted?!")
       else
-        changeMedia(roomID, cacheEntry);
+        User.findOne({id: data.userID}, function (err, nextDJ) {
+          if (err || !nextDJ)
+            sails.log.error("Invalid user ID " + data.userID + "! POSSIBLE DB CORRUPTION!")
+          else
+            cacheEntry.djName = nextDJ.username;
+            changeMedia(roomID, cacheEntry);
+        })
+
     });
   });
 }
