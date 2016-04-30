@@ -153,7 +153,7 @@ function Room() {
     }
     else {
       mediaData = media;
-      mediaData.pos = parseInt((media.endTime - Date.now()) / 1000);
+      mediaData.pos = parseInt((media.endTime - media.serverTime) / 1000);
       if (mediaData.pos < 0)
         console.warn("Media data position < 0 (" + mediaData.pos + ")")
       mediaData.pos = mediaData.pos < 0 ? 0 : mediaData.pos;
@@ -179,7 +179,7 @@ function Room() {
             'startSeconds': 0,
             'suggestedQuality': 'large'
           });
-          var start = (mediaData.duration - (media.endTime - Date.now()) / 1000);
+          var start = (mediaData.duration - (media.endTime -  media.serverTime) / 1000);
           if (mediaData.pos < 0)
             console.warn("Media start position < 0 (" + start + ")")
           start = start < 0 ? 0 : start;
