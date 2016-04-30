@@ -175,12 +175,17 @@ function Room() {
       // Players controls
       if (media.type == "youtube") {
         createYTPlayer(function (player) {
+          player.setVolume(volume);
           player.loadVideoById({
             'videoId': media.contentID,
             'startSeconds': 0,
             'suggestedQuality': 'large'
           });
-          player.seekTo((mediaData.duration - (media.endTime - Date.now()) / 1000))
+          var start = (mediaData.duration - (media.endTime - Date.now()) / 1000);
+          if (mediaData.pos < 0)
+            console.warn("Media start position < 0 (" + start + ")")
+          start = start < 0 ? 0 : start;
+          player.seekTo(start)
           player.playVideo();
         })
       }
