@@ -253,7 +253,7 @@ function guid() {
 
 $(document).ready(function () {
 
-  if (local.page == "") {
+  if (local.page == "home") {
 
     var personnalGuid = guid();
     var popup = null;
