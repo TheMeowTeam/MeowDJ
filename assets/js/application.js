@@ -244,14 +244,14 @@ $(document).ready(function () {
 
       if (popup != null)
         popup.close();
-      
+
       location.reload();
     });
 
     $('#login').click(function(event) {
 
       event.preventDefault();
-      popup = window.open('http://localhost/login?guid=' + personnalGuid, 'popupWindow', 'width=400,height=600,scrollbars=yes');
+      popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid, 'popupWindow', 'width=400,height=600,scrollbars=yes');
     });
   }
   else if (local.page == 'room') {

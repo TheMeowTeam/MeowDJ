@@ -20,7 +20,8 @@ module.exports = {
    ***************************************************************************/
 
   port: 1337,
-  explicitHost: 'auth.dj.blueslime.fr',
+  explicitHost: 'dj.blueslime.fr',
+  authenticationHost: 'https://auth.dj.blueslime.fr',
 
   ssl: {
     key: fs.readFileSync('/etc/letsencrypt/live/dj.blueslime.fr/privkey.pem'),
