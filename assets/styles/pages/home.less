@@ -1,0 +1,73 @@
+#home {
+
+  background-color: @secondary-background;
+
+  .container {
+    width: 900px;
+
+    background-color: @secondary-background;
+    color: @terciary-font;
+  }
+
+  .header {
+    margin-bottom: 10px;
+    padding-top: 30px;
+    padding-bottom: 10px;
+
+    background-color: @primary-background;
+    color: @primary-font;
+
+    .container {
+      background-color: @primary-background;
+      color: @primary-font;
+    }
+
+    .logo {
+      width: 211.25px;
+      height: 70.5px;
+
+      display: inline-block;
+    }
+
+    .join {
+      margin-top: 15px;
+      width: 300px;
+
+      float: right;
+      display: inline-block;
+
+      .button {
+        height: 38px;
+        color: @primary-font;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .content {
+    .quote {
+      text-align: center;
+      font-size: 16px;
+      font-style: italic;
+
+      .character {
+        font-family: "Romana", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 80px;
+        font-style: normal;
+
+        text-align: left;
+
+        &.last {
+          text-align: right;
+        }
+      }
+
+      .author {
+        text-align: right;
+        font-size: 16px;
+        font-style: normal;
+      }
+    }
+  }
+
+}

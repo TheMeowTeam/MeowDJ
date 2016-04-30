@@ -1,150 +1,45 @@
 /**
  * AuthController
  *
- * @description :: This is merely meant as an example of how your Authentication controller
- *                 should look. It currently includes the minimum amount of functionality for
- *                 the basics of Passport.js to work.
+ * @description :: Server-side logic for managing authentication
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
 module.exports = {
 
 
-
-  /**
-   * `AuthController.login()`
-   *
-   * Render the login page
-   */
-  login: function (req, res) {
-
-    return res.view({
-      data: {
-        title: 'Login',
-        page: 'login',
-        error: req.flash('error')
-      }
-    });
-
-  },
-
-
-
-  /**
-   * `AuthController.logout()`
-   *
-   * Log out a user and return them to the homepage
-   *
-   * Passport exposes a logout() function on req (also aliased as logOut()) that
-   * can be called from any route handler which needs to terminate a login
-   * session. Invoking logout() will remove the req.user property and clear the
-   * login session (if any).
-   *
-   * For more information on logging out users in Passport.js, check out:
-   * http://passportjs.org/guide/logout/
-   */
-  logout: function (req, res) {
-
-    req.logout();
-    req.session.authenticated = false;
-    res.redirect('/');
-  },
-
-
-
-  /**
-   * `AuthController.provider()`
-   *
-   * Create a third-party authentication endpoint
-   */
-  provider: function (req, res) {
-
-    passport.endpoint(req, res);
-  },
-
-
-
   /**
    * `AuthController.callback()`
    *
-   * Create a authentication callback endpoint
-   *
-   * This endpoint handles everything related to creating and verifying Pass-
-   * ports and users, both locally and from third-aprty providers.
-   *
-   * Passport exposes a login() function on req (also aliased as logIn()) that
-   * can be used to establish a login session. When the login operation
-   * completes, user will be assigned to req.user.
-   *
-   * For more information on logging in users in Passport.js, check out:
-   * http://passportjs.org/guide/login/
+   * Fired when a user logins to the authentication
+   * application
    */
   callback: function (req, res) {
 
-    function tryAgain (err) {
+    if (!req.param('guid') || !req.param('token'))
+      return;
 
-      var flashError = req.flash('error')[0];
+    var guid = req.param('guid');
+    var token = req.param('token');
 
-      if (err && !flashError)
-        req.flash('error', 'Error.Passport.Generic');
-      else if (flashError)
-        req.flash('error', flashError);
+    // TODO: Load the user into the session
 
-      req.flash('form', req.body);
+    sails.sockets.broadcast(guid, 'login-callback', { result: 'ok' });
 
-      var action = req.param('action');
-
-      switch (action) {
-        case 'register':
-          res.redirect('/login');
-          break;
-
-        case 'disconnect':
-          res.redirect('back');
-          break;
-
-        default:
-          res.redirect('/login');
-      }
-    }
-
-    passport.callback(req, res, function (err, user, challenges) {
-
-      if (err || !user)
-        return tryAgain(challenges);
-
-      req.login(user, function (err) {
-
-        if (err)
-          return tryAgain(err);
-
-        req.session.authenticated = true;
-        req.session.user = user;
-
-        if (user.activation_token === 'activated') {
-          if (user.tos == false) {
-            return res.redirect('/welcome');
-          }
-          else {
-            return res.redirect('/');
-          }
-        }
-        else {
-          return res.redirect('/activate');
-        }
-      });
-    });
+    return res.json({ result: 'ok' });
   },
 
 
-
   /**
-   * `AuthController.disconnect()`
+   * `AuthController.subscribe()`
    *
-   * Disconnect a passport from a user
+   * Subscribe new user to listen the authentication
    */
-  disconnect: function (req, res) {
+  subscribe: function (req, res) {
 
-    passport.disconnect(req, res);
+    sails.sockets.join(req.socket, req.param('guid'));
+    return res.json({ result: 'ok' });
   }
+
 };
+

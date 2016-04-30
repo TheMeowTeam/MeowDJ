@@ -179,7 +179,7 @@ function Room() {
             'startSeconds': 0,
             'suggestedQuality': 'large'
           });
-          var start = (mediaData.duration - (media.endTime -  media.serverTime) / 1000);
+          var start = (mediaData.duration - (media.endTime - media.serverTime) / 1000);
           if (mediaData.pos < 0)
             console.warn("Media start position < 0 (" + start + ")")
           start = start < 0 ? 0 : start;
@@ -208,8 +208,7 @@ function Room() {
 }
 
 function maskYTPlayer() {
-  if (player != null)
-  {
+  if (player != null) {
     $('#player').css("display", "none")
   }
 }
@@ -243,9 +242,39 @@ function createYTPlayer(onReady) {
   });
 }
 
+function guid() {
+
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 $(document).ready(function () {
 
-  if (local.page == 'room') {
+  if (local.page == "") {
+
+    var personnalGuid = guid();
+    var popup = null;
+    io.socket.post('/login/subscribe', {
+      guid: personnalGuid
+    }, function (response) {
+      if (response.result != 'ok') {
+        alert('An error occured while loading the application! Please try again later!');
+      }
+    });
+    io.socket.on('login-callback', function (data) {
+      if (popup != null)
+        popup.close();
+      location.reload();
+    });
+    $('#login').click(function (event) {
+      event.preventDefault();
+      popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid, 'popupWindow', 'width=400,height=600,scrollbars=yes');
+    });
+  }
+  else if (local.page == 'room') {
     room = new Room();
     room.initialize();
   }

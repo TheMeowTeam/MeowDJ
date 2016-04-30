@@ -10,6 +10,8 @@
  *
  */
 
+var fs = require('fs');
+
 module.exports = {
 
   /***************************************************************************
@@ -17,10 +19,13 @@ module.exports = {
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
 
-  // models: {
-  //   connection: 'someMongodbServer'
-  // },
+  port: 1337,
+  explicitHost: 'dj.blueslime.fr',
+  authenticationHost: 'https://auth.dj.blueslime.fr',
 
-  authenticationHost: 'http://localhost'
+  ssl: {
+    key: fs.readFileSync('/etc/letsencrypt/live/dj.blueslime.fr/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/dj.blueslime.fr/fullchain.pem')
+  }
 
 };

@@ -14,11 +14,14 @@ module.exports = {
    * Fired when a user wants to load the home page
    */
   index: function (req, res) {
+
     data = {
       title: 'Home',
       page: 'home',
-      user: req.session.user
+      user: req.session.user,
+      authenticationHost: sails.config.authenticationHost
     };
+
     if (req.session.user) {
       Room.findOne({
         owner: req.session.user.id
@@ -35,8 +38,10 @@ module.exports = {
         return res.view('home', {data : data});
       });
     }
-    else
-      return res.view('home', {data : data});
+    else {
+      return res.view('home', {data: data});
+    }
   }
+
 };
 
