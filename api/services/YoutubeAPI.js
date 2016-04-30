@@ -18,11 +18,12 @@ module.exports = {
   getVideoID: function (url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&\?]*).*/;
     var match = url.match(regExp);
-    return (match && match[7].length == 11) ? match[7] : null;
+    return (match && match[7].length == 11) ? {type: "youtube", "contentID": match[7]} : null;
   },
   convertDuration: function (iso8601time) {
     var match = iso8601time.match(/PT(\d+H)?(\d+M)?(\d+S)?/)
-
+    if (match == null)
+      return -1;
     var hours = (parseInt(match[1]) || 0);
     var minutes = (parseInt(match[2]) || 0);
     var seconds = (parseInt(match[3]) || 0);

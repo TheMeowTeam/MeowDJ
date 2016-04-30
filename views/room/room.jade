@@ -2,26 +2,40 @@ extends ../layout.jade
 
 block preInit
   script(src='/js/dependencies/sails.io.js')
-  script(src="https://www.youtube.com/iframe_api")
 
 block body
-  div.wrapper
-    div.centered
-      h2.primary-color I'm the room #{data.room.name}!
-      h3.timer.primary-color ??? / ???
+  nav.topbar
+    div.left
+      a.p-box(href='/')
+        div.icon.logo
+      div.info
+        p.top-label.playing ??? - ???
+        p.top-label.dj-name ???
+    div.right
+      div.info
+        p.top-label.volume-label 100%
+        input(type = "range", min = "0", max = "100", value = "100").volume
+  div.room-left
+    div.playback
       div#player
-      h2.primary-color Add to waiting room:
-      div.input-group
-        div.playlist
-          form(action = '')
-            input.underline.primary-color.primary-background(id = "url", type = "text", placeholder = "URL", autocomplete = "off")
-            a.btn.btn-chat(onclick="$(this).closest('form').submit()") >
+      div.controls
+        a.control-btn.media-select
+          span Add music (YT)
+        p.control-btn.timer ??:??
+  div.room-right
+    div.chat
+      ul.messages
+    div.chat-box
+      form(onsubmit='/')
+        input.text(id='message', type='text', placeholder='Type and enter!', autocomplete='off')
+  div.modal#media-queue
+    div.modal-container
+      div.modal-outbox
+        div.modal-box
+          div.modal-text
+            p(style="margin-bottom: 15px") Media URL to add to waiting list:
+            form(onsubmit='/')
+              input.text(id='url', type='text', placeholder='URL', autocomplete='off')
 
-  div.chat
-    ul.messages
-
-    form(action = '')
-      div.input-group
-        input.underline.primary-color.secondary-background(id = "message", type = "text", placeholder = "Message...", autocomplete = "off")
-        span.input-group-btn
-          a.btn.btn-chat(onclick="$(this).closest('form').submit()") >
+block postInit
+  script(src="https://www.youtube.com/iframe_api")

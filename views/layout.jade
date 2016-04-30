@@ -9,9 +9,12 @@ head
 
   script(src='https://code.jquery.com/jquery-2.2.0.min.js')
   script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
-  block preInit
   script(src='/js/application.js')
+  block preInit
 
 body(id = data.page)
-  div.container-fluid
+  div.container-base
     block body
+
+footer
+  block postInit

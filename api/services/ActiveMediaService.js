@@ -8,10 +8,12 @@ function getMedia(roomID) {
 }
 
 function sendPlayUpdate(channel, activeMediaData) {
+  if (activeMediaData.content != null)
+    activeMediaData.content.serverTime = Date.now();
   sails.sockets.broadcast(channel, 'media/update', activeMediaData.content);
 }
 
-function changeMedia(roomID, content, type) {
+function changeMedia(roomID, content) {
   if (content == null) {
     sails.activeMedia[roomID] = null;
     sendPlayUpdate(roomID, {}) // Force client clean up
@@ -20,9 +22,8 @@ function changeMedia(roomID, content, type) {
   if (sails.activeMedia[roomID])
     clearTimeout(sails.activeMedia[roomID].task)
   else sails.activeMedia[roomID] = []
-  content.type = type;
   sails.activeMedia[roomID].content = content;
-  sails.activeMedia[roomID].content.endTime = (Date.now() / 1000 | 0) + content.duration;
+  sails.activeMedia[roomID].content.endTime = ((Date.now() + (content.duration * 1000)));
   sails.activeMedia[roomID].task = setTimeout(function () {
     nextMedia(roomID);
   }, content.duration * 1000);
@@ -36,7 +37,7 @@ function nextMedia(roomID) {
 
     // No data, end of the queue
     if (data == null || data.length == 0) {
-      changeMedia(roomID, null, null);
+      changeMedia(roomID, null);
       return;
     }
     data = data[0];
@@ -47,17 +48,20 @@ function nextMedia(roomID) {
       else
         sails.log.debug("Entry: " + data.id + " destroyed")
     });
-    if (data.type == 'youtube') {
-      YoutubeCache.findOne({id: data.cacheID}, function (err, cacheEntry) {
-        // Entry not found, THIS SHOULDN'T BE POSSIBLE
-        if (err || !cacheEntry)
-          sails.log.error("Invalid cache entry " + data.cacheID + "! Is your metadata cache corrupted?!")
-        else
-          changeMedia(roomID, cacheEntry, data.type);
-      });
-    }
-    else
-      sails.log.warn("Unknown content type '" + data.type + "'")
+    MediaCache.findOne({id: data.cacheID}, function (err, cacheEntry) {
+      // Entry not found, THIS SHOULDN'T BE POSSIBLE
+      if (err || !cacheEntry)
+        sails.log.error("Invalid cache entry " + data.cacheID + "! Is your metadata cache corrupted?!")
+      else
+        User.findOne({id: data.userID}, function (err, nextDJ) {
+          if (err || !nextDJ)
+            sails.log.error("Invalid user ID " + data.userID + "! POSSIBLE DB CORRUPTION!")
+          else
+            cacheEntry.djName = nextDJ.username;
+            changeMedia(roomID, cacheEntry);
+        })
+
+    });
   });
 }
 
