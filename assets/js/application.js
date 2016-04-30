@@ -83,11 +83,6 @@ function Room() {
     initialized = true;
   }
 
-  function fetchSubResponse() {
-    var response = subscribeResponse;
-    return response;
-  }
-
   /**
    * Initialize room's player
    */
@@ -152,7 +147,9 @@ function Room() {
       $('.timer').text('??? / ???')
       $('.playing').text("Nobody is playing !")
       $('.dj-name').text("")
-      destroyYTPlayer();
+      createYTPlayer(function (event) {
+        maskYTPlayer();
+      })
     }
     else {
       mediaData = media;
@@ -175,6 +172,7 @@ function Room() {
       // Players controls
       if (media.type == "youtube") {
         createYTPlayer(function (player) {
+          $('#player').css("display", "block")
           player.setVolume(volume);
           player.loadVideoById({
             'videoId': media.contentID,
@@ -189,7 +187,7 @@ function Room() {
           player.playVideo();
         })
       }
-      else destroyYTPlayer();
+      else maskYTPlayer();
     }
   }
 
@@ -209,10 +207,11 @@ function Room() {
   }
 }
 
-function destroyYTPlayer() {
+function maskYTPlayer() {
   if (player != null)
-    player.destroy();
-  player = null;
+  {
+    $('#player').css("display", "none")
+  }
 }
 
 function createYTPlayer(onReady) {
