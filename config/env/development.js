@@ -21,6 +21,7 @@ module.exports = {
   //   connection: 'someMongodbServer'
   // },
 
+  applicationHost: 'http://localhost:1337',
   authenticationHost: 'http://localhost'
 
 };

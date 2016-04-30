@@ -21,6 +21,7 @@ module.exports = {
 
   port: 1337,
   explicitHost: 'dj.blueslime.fr',
+  applicationHost: 'https://dj.blueslime.fr',
   authenticationHost: 'https://auth.dj.blueslime.fr',
 
   ssl: {

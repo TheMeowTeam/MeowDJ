@@ -19,7 +19,8 @@ module.exports = {
       title: 'Home',
       page: 'home',
       user: req.session.user,
-      authenticationHost: sails.config.authenticationHost
+      authenticationHost: sails.config.authenticationHost,
+      baseURL: sails.config.applicationHost
     };
 
     if (req.session.user) {

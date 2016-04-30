@@ -251,7 +251,7 @@ $(document).ready(function () {
     $('#login').click(function(event) {
 
       event.preventDefault();
-      popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid, 'popupWindow', 'width=400,height=600,scrollbars=yes');
+      popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid + '&host=' + local.baseURL, 'popupWindow', 'width=400,height=600,scrollbars=yes');
     });
   }
   else if (local.page == 'room') {
