@@ -290,7 +290,7 @@ $(document).ready(function () {
       window.location.replace('/create');
     });
 
-    $('#room').click(function (event) {
+    $('#room-join').click(function (event) {
       event.preventDefault();
       window.location.replace('/' + local.userRoom);
     });
