@@ -1,7 +1,7 @@
 /**
  * AuthCache.js - auth cache for login
  * TODO: use a separate Waterline connector
- * @description :: WaitingRoom5 model
+ * @description :: AuthCache model
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
@@ -10,6 +10,6 @@ module.exports = {
   autoUpdatedAt: false,
   attributes: {
     guid: {type: 'string', required: true},
-    token: {type: 'string'}
+    transactionID: {type: 'string'}
   }
 }

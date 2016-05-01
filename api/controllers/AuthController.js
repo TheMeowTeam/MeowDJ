@@ -24,13 +24,14 @@ module.exports = {
    * application
    */
   callback: function (req, res) {
-    if (!req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
+    if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {
         code: 400,
         message: 'Bad request'
       });
     }
 
+    var transactionID = req.param('transactionID');
     var guid = req.param('guid');
     AuthCache.findOne({guid: guid}, function (err, obj) {
       if (err || !obj)
@@ -38,16 +39,23 @@ module.exports = {
           code: 403,
           message: 'Access denied'
         });
-      sails.sockets.broadcast(guid, 'login-callback', {
-        user: {
-          id: req.param('userId'),
-          username: req.param('userUsername'),
-          rank: req.param('userRank')
-        }
-      });
-      sails.log.debug("Destorying guid " + obj.guid)
-      AuthCache.destroy({id: obj.id});
-      return res.json({result: 'ok'});
+      AuthCache.update({id: obj.id}, {transactionID: transactionID}, function (err, objUpdated) {
+        if (err || !obj)
+          return res.json(503, {
+            code: 503,
+            message: 'Internal Server Error'
+          });
+        sails.sockets.broadcast(guid, 'login-callback', {
+          user: {
+            id: req.param('userId'),
+            username: req.param('userUsername'),
+            rank: req.param('userRank'),
+            guid: req.param('guid'),
+            transactionID: req.param('transactionID')
+          }
+        });
+        return res.json({result: 'ok'});
+      })
     })
   },
 
@@ -75,19 +83,21 @@ module.exports = {
    */
   authenticate: function (req, res) {
     // FIXME: Implement token system in auth server to avoid security issues
-    if (!req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
+    if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {
         code: 400,
         message: 'Bad request'
       });
     }
 
-    AuthCache.findOne({guid: req.param('guid')}, function (err, obj) {
+    AuthCache.findOne({transactionID: req.param('transactionID')}, function (err, obj) {
       if (err || !obj)
         return res.json(403, {
           code: 403,
           message: 'Access denied'
         });
+      sails.log.debug("Destorying transaction " + obj.transactionID)
+      AuthCache.destroy({id: obj.id});
       req.session.authenticated = true;
       req.session.user = {
         id: req.param('userId'),

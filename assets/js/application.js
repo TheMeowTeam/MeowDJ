@@ -263,11 +263,13 @@ $(document).ready(function () {
         if (popup != null)
           popup.close();
 
+        alert(JSON.stringify(data))
         $.redirect('/login/authenticate', {
           guid: personnalGuid,
           userId: data.user.id,
           userUsername: data.user.username,
-          userRank: data.user.rank
+          userRank: data.user.rank,
+          transactionID: data.user.transactionID
         });
       });
 
