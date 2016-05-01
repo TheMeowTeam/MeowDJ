@@ -58,9 +58,8 @@ function Room() {
           player.setVolume(volume);
       });
 
-      $(document).keypress(function (event) {
+      $(document).on('keydown', function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
-
         // Force quit the modal
         if (keycode == 27)
           $('#media-queue').css("display", "none")
