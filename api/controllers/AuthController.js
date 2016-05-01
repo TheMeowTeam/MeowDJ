@@ -82,7 +82,15 @@ module.exports = {
    * Subscribe new user to listen the authentication
    */
   authenticate: function (req, res) {
-    // FIXME: Implement token system in auth server to avoid security issues
+    if (req.ip != sails.authentificationIP)
+    {
+      sails.log.warn("Unauthorized IP detected during authenticate (IP: " + sails.authentificationIP + ")")
+      return res.json(403, {
+        code: 403,
+        message: 'Access denied'
+      });
+    }
+
     if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {
         code: 400,
