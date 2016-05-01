@@ -242,20 +242,11 @@ function createYTPlayer(onReady) {
   });
 }
 
-function guid() {
-
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
 $(document).ready(function () {
 
   if (local.page == "home") {
 
-    var personnalGuid = guid();
+    var personnalGuid = null;
     var popup = null;
 
     io.socket.post('/login/subscribe', {
@@ -265,34 +256,36 @@ $(document).ready(function () {
       if (response.result != 'ok') {
         alert('An error occured while loading the application! Please try again later!');
       }
-    });
+      personnalGuid = response.guid;
 
-    io.socket.on('login-callback', function (data) {
+      io.socket.on('login-callback', function (data) {
 
-      if (popup != null)
-        popup.close();
+        if (popup != null)
+          popup.close();
 
-      $.redirect('/login/authenticate', {
-        userId: data.user.id,
-        userUsername: data.user.username,
-        userRank: data.user.rank
+        $.redirect('/login/authenticate', {
+          guid: personnalGuid,
+          userId: data.user.id,
+          userUsername: data.user.username,
+          userRank: data.user.rank
+        });
       });
-    });
 
 
-    $('#login').click(function (event) {
-      event.preventDefault();
-      popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid + '&host=' + local.baseURL, 'popupWindow', 'width=400,height=600,scrollbars=yes');
-    });
+      $('#login').click(function (event) {
+        event.preventDefault();
+        popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid + '&host=' + local.baseURL, 'popupWindow', 'width=400,height=600,scrollbars=yes');
+      });
 
-    $('#create').click(function (event) {
-      event.preventDefault();
-      window.location.replace('/create');
-    });
+      $('#create').click(function (event) {
+        event.preventDefault();
+        window.location.replace('/create');
+      });
 
-    $('#room-join').click(function (event) {
-      event.preventDefault();
-      window.location.replace('/' + local.userRoom);
+      $('#room-join').click(function (event) {
+        event.preventDefault();
+        window.location.replace('/' + local.userRoom);
+      });
     });
   }
   else if (local.page == 'room') {
