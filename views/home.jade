@@ -1,12 +1,12 @@
 extends layout.jade
 
 block preInit
-  script(src='/js/dependencies/sails.io.js')
+  script(src='/app/js/dependencies/sails.io.js')
 
 block body
   div.header
     div.container
-      img.logo(src='/images/logo-horizontal.png')
+      img.logo(src='/common/images/logo-horizontal.png')
 
       div.join
         if (data.user)
@@ -27,11 +27,11 @@ block body
 
   div.footer
     div.container
-      img.logo(src='/images/logo-cat.png')
+      img.logo(src='/common/images/logo-cat.png')
 
       div.credits
         p #[span.red.octicon.octicon-code] with #[span.red.octicon.octicon-heart] by #[a(href='https://twitter.com/iamblueslime', target='_blank') @iamblueslime], #[a(href='https://twitter.com/ThogDev', target='_blank') @ThogDev], #[a(href='https://twitter.com/Kylian_LM', target='_blank') @Kylian_LM]
         p.last See on #[a(href='https://github.com/MeowDJ/MeowDJ', target='_blank') #[span.red.octicon.octicon-mark-github]]
 
       div.contact
-        a(href='', target='_blank') #[img.twitter(src='/images/twitter.png')]
+        a(href='', target='_blank') #[img.twitter(src='/common/images/twitter.png')]

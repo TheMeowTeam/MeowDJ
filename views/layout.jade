@@ -2,14 +2,14 @@ doctype html
 head
   title #{data.title} • MeowDJ
   meta(name='viewport',content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
-  link(rel='stylesheet', href='/styles/importer.css')
+  link(rel='stylesheet', href='/app/styles/importer.css')
 
   script.
     var local = !{JSON.stringify(data)}
 
   script(src='https://code.jquery.com/jquery-2.2.0.min.js')
-  script(src='/js/dependencies/jquery.redirect.js')
-  script(src='/js/application.js')
+  script(src='/app/js/dependencies/jquery.redirect.js')
+  script(src='/app/js/application.js')
   block preInit
 
 body(id = data.page)
