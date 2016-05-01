@@ -70,4 +70,63 @@
     }
   }
 
+  .footer {
+    margin-top: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    line-height: 116px;
+
+    background-color: @primary-background;
+    color: @primary-font;
+
+    .container {
+      background-color: @primary-background;
+      color: @primary-font;
+    }
+
+    .logo {
+      width: 101px;
+      height: 100px;
+
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal;
+    }
+
+    .credits {
+      margin-left: 15px;
+      padding-top: 13px;
+
+      color: @secondary-font;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal;
+
+      p {
+        :not(.last) {
+          margin-bottom: 5px;
+        }
+      }
+
+      a {
+        color: @secondary-font;
+      }
+
+      .red {
+        color: @buttons-red-border;
+        font-weight: bold;
+      }
+    }
+
+    .contact {
+      padding-top: 45px;
+      float: right;
+
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal;
+      font-size: 26px;
+    }
+  }
+
 }
