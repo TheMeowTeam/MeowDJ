@@ -14,7 +14,7 @@ module.exports = {
    * Fired when a user wants to load the home page
    */
   index: function (req, res) {
-
+    
     data = {
       title: 'Home',
       page: 'home',

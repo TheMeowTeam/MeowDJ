@@ -41,6 +41,7 @@ module.exports.routes = {
 
   'post /login/subscribe': { controller: 'AuthController', action: 'subscribe' },
   'post /login/callback': { controller: 'AuthController', action: 'callback' },
+  'post /login/authenticate': { controller: 'AuthController', action: 'authenticate' },
 
 
   /**

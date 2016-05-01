@@ -257,21 +257,42 @@ $(document).ready(function () {
 
     var personnalGuid = guid();
     var popup = null;
+
     io.socket.post('/login/subscribe', {
       guid: personnalGuid
     }, function (response) {
+
       if (response.result != 'ok') {
         alert('An error occured while loading the application! Please try again later!');
       }
     });
+
     io.socket.on('login-callback', function (data) {
+
       if (popup != null)
         popup.close();
-      location.reload();
+
+      $.redirect('/login/authenticate', {
+        userId: data.user.id,
+        userUsername: data.user.username,
+        userRank: data.user.rank
+      });
     });
+
+
     $('#login').click(function (event) {
       event.preventDefault();
       popup = window.open(local.authenticationHost + '/login?guid=' + personnalGuid + '&host=' + local.baseURL, 'popupWindow', 'width=400,height=600,scrollbars=yes');
+    });
+
+    $('#create').click(function (event) {
+      event.preventDefault();
+      window.location.replace('/create');
+    });
+
+    $('#room').click(function (event) {
+      event.preventDefault();
+      window.location.replace('/' + local.userRoom);
     });
   }
   else if (local.page == 'room') {

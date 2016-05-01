@@ -16,15 +16,22 @@ module.exports = {
    */
   callback: function (req, res) {
 
-    if (!req.param('guid') || !req.param('token'))
-      return;
+    if (!req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
+      return res.json(400, {
+        code: 400,
+        message: 'Bad request'
+      });
+    }
 
     var guid = req.param('guid');
-    var token = req.param('token');
-
-    // TODO: Load the user into the session
-
-    sails.sockets.broadcast(guid, 'login-callback', { result: 'ok' });
+    
+    sails.sockets.broadcast(guid, 'login-callback', {
+      user: {
+        id: req.param('userId'),
+        username: req.param('userUsername'),
+        rank : req.param('userRank')
+      }
+    });
 
     return res.json({ result: 'ok' });
   },
@@ -39,6 +46,31 @@ module.exports = {
 
     sails.sockets.join(req.socket, req.param('guid'));
     return res.json({ result: 'ok' });
+  },
+
+
+  /**
+   * `AuthController.authenticate()`
+   *
+   * Subscribe new user to listen the authentication
+   */
+  authenticate: function (req, res) {
+
+    if (!req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
+      return res.json(400, {
+        code: 400,
+        message: 'Bad request'
+      });
+    }
+
+    req.session.authenticated = true;
+    req.session.user = {
+      id: req.param('userId'),
+      username: req.param('userUsername'),
+      rank : req.param('userRank')
+    };
+
+    return res.redirect('/');
   }
 
 };

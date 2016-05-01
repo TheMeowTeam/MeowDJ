@@ -24,7 +24,10 @@ block body
 
       div.join
         if (data.user)
-          a.button.red(href='/create') Create my room!
+          if (data.userRoom)
+            button.button.red#room Join my room!
+          else
+            button.button.red#create Create my room!
         else
           button.button.red#login Join the party!
 

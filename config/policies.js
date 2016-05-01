@@ -29,7 +29,7 @@ module.exports.policies = {
   '*': [],
 
   RoomController: {
-    '*': [ 'sessionAuth', 'finalizedAccount' ]
+    '*': [ 'sessionAuth' ]
   }
 
 
