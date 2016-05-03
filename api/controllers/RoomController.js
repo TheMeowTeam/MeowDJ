@@ -5,17 +5,6 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-function processAddWaitingQueue(roomID, user, data) {
-  WaitingQueue.create({roomID: roomID, userID: user.id, cacheID: data.id}, function (err) {
-    if (err)
-      sails.log.warn("Error during adding to waiting queue " + JSON.stringify(err))
-
-    if (!ActiveMediaService.isPlaying(roomID)) {
-      ActiveMediaService.nextMedia(roomID);
-    }
-  });
-}
-
 module.exports = {
 
 
@@ -165,7 +154,7 @@ module.exports = {
       if (err || !room) {
         return res.json({result: 'error'});
       }
-      var content = MediaService.getVideoID(url);
+      var content = MediaService.parseURL(url);
 
       // TODO: Soundcloud integration
       if (content == null)
@@ -176,38 +165,10 @@ module.exports = {
       MediaCache.findOne({contentID: content.contentID}, function (err, cacheEntry) {
         // Entry not found, cache need to be generated
         if (err || !cacheEntry) {
-
-          if (content.type == "youtube") {
-            MediaService.fetchVideoData(content.contentID, function (err, data) {
-              if (err)
-                sails.log.warn("Error during YTv3 API data fetching: " + JSON.stringify(err))
-              else {
-                var item = data.items[0];
-                var duration = MediaService.convertDuration(item.contentDetails.duration);
-                if (duration == -1) {
-                  sails.log.warn("Duration invalid for mediaID " + content.contentID);
-                  return;
-                }
-                MediaCache.create({
-                  contentID: item.id,
-                  creatorID: item.snippet.channelId,
-                  creatorName: item.snippet.channelTitle,
-                  title: item.snippet.title,
-                  duration: duration,
-                  licensedContent: item.contentDetails.licensedContent,
-                  url: url,
-                  type: "youtube"
-                }, function (err, data) {
-                  if (err)
-                    sails.log.warn("Error during YTv3 API data caching: " + JSON.stringify(err))
-                  processAddWaitingQueue(roomId, user, data);
-                })
-              }
-            })
-          }
+          MediaService.fetchContentData(content, user, roomId, url)
         }
         else {
-          processAddWaitingQueue(roomId, user, cacheEntry);
+          ActiveMediaService.processAddWaitingQueue(roomId, user, cacheEntry);
         }
 
         return res.json({result: 'ok'})

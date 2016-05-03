@@ -121,6 +121,7 @@ function Room() {
   }
 
   function getTime(totalSeconds) {
+    totalSeconds = parseInt(totalSeconds, 10)
     hours = Math.floor(totalSeconds / 3600);
     totalSeconds %= 3600;
     minutes = Math.floor(totalSeconds / 60);
@@ -161,7 +162,7 @@ function Room() {
       timer = setInterval(function () {
         mediaData.pos--;
         $('.timer').css("color", (mediaData.pos < 10 ? "red" : "#E4D7C6"))
-        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration))
+        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration / 1000))
       }, 1000);
 
       $('.playing').text(media.creatorName + " - " + media.title)

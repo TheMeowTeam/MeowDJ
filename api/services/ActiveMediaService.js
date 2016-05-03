@@ -3,8 +3,23 @@ if (sails.activeMedia == null) {
   sails.activeMedia = Object.create(null)
 }
 
+function processAddWaitingQueue(roomID, user, data) {
+  WaitingQueue.create({roomID: roomID, userID: user.id, cacheID: data.id}, function (err) {
+    if (err)
+      sails.log.warn("Error during adding to waiting queue " + JSON.stringify(err))
+    
+    if (!isPlaying(roomID)) {
+      nextMedia(roomID);
+    }
+  });
+}
+
 function getMedia(roomID) {
   return sails.activeMedia[roomID];
+}
+
+function isPlaying(roomID) {
+  return getMedia(roomID) != null
 }
 
 function sendPlayUpdate(channel, activeMediaData) {
@@ -22,11 +37,14 @@ function changeMedia(roomID, content) {
   if (sails.activeMedia[roomID])
     clearTimeout(sails.activeMedia[roomID].task)
   else sails.activeMedia[roomID] = []
+  if (content.type == "youtube")
+    content.duration *= 1000;
   sails.activeMedia[roomID].content = content;
-  sails.activeMedia[roomID].content.endTime = ((Date.now() + (content.duration * 1000)));
+  sails.activeMedia[roomID].content.startTime = Date.now();
+  sails.activeMedia[roomID].content.endTime = ((Date.now() + content.duration));
   sails.activeMedia[roomID].task = setTimeout(function () {
     nextMedia(roomID);
-  }, content.duration * 1000);
+  }, content.duration);
   sendPlayUpdate(roomID, getMedia(roomID));
 }
 
@@ -58,7 +76,7 @@ function nextMedia(roomID) {
             sails.log.error("Invalid user ID " + data.userID + "! POSSIBLE DB CORRUPTION!")
           else
             cacheEntry.djName = nextDJ.username;
-            changeMedia(roomID, cacheEntry);
+          changeMedia(roomID, cacheEntry);
         })
 
     });
@@ -69,7 +87,6 @@ module.exports = {
   changeMedia: changeMedia,
   getMedia: getMedia,
   nextMedia: nextMedia,
-  isPlaying: function (roomID) {
-    return getMedia(roomID) != null
-  }
+  isPlaying: isPlaying,
+  processAddWaitingQueue: processAddWaitingQueue
 }
