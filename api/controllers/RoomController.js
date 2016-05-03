@@ -165,7 +165,7 @@ module.exports = {
       if (err || !room) {
         return res.json({result: 'error'});
       }
-      var content = YoutubeAPI.getVideoID(url);
+      var content = MediaService.getVideoID(url);
 
       // TODO: Soundcloud integration
       if (content == null)
@@ -178,12 +178,12 @@ module.exports = {
         if (err || !cacheEntry) {
 
           if (content.type == "youtube") {
-            YoutubeAPI.fetchVideoData(content.contentID, function (err, data) {
+            MediaService.fetchVideoData(content.contentID, function (err, data) {
               if (err)
                 sails.log.warn("Error during YTv3 API data fetching: " + JSON.stringify(err))
               else {
                 var item = data.items[0];
-                var duration = YoutubeAPI.convertDuration(item.contentDetails.duration);
+                var duration = MediaService.convertDuration(item.contentDetails.duration);
                 if (duration == -1) {
                   sails.log.warn("Duration invalid for mediaID " + content.contentID);
                   return;

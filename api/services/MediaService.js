@@ -1,16 +1,33 @@
+var logger = sails.log;
+logger.info("Starting Media Service...")
 var google = require('googleapis');
 var local = null;
-sails.log.info("Initializing YTv3 Data API connector...")
+var youtube = null;
+
+// Gather config/local.js
 try {
   local = require('../../config/local.js')
 }
+catch (e)
+{
+  logger.error("Cannot get config/local.js")
+  logger.error("Shutting down!")
+}
+
+// Youtube
+try {
+
+  logger.info("Initializing YTv3 Data API connector...")
+  youtube = google.youtube({version: 'v3', auth: local.youtubeKey});
+  logger.info("Youtube integration ready to be used!");
+}
 catch (e) {
-  sails.log.error("Youtube API Key not provided or config/local.js is invalid!")
-  sails.log.error("Shutting down!")
+  logger.warn("Youtube API Key incorrect!")
+  logger.warn("Youtube content will no be available!")
   process.exit(42)
 }
-var youtube = google.youtube({version: 'v3', auth: local.youtubeKey});
-sails.log.info("Youtube integration ready to be used!");
+
+
 module.exports = {
   fetchVideoData: function (videoID, callback) {
     youtube.videos.list({part: 'snippet,contentDetails', id: videoID}, callback);
