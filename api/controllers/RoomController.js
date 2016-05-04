@@ -116,7 +116,7 @@ module.exports = {
    */
   subscribe: function (req, res) {
 
-    var roomId = req.param('roomId');
+    var roomId = req.param('room');
 
     Room.findOne({
       identifier: roomId
@@ -143,7 +143,7 @@ module.exports = {
   },
 
   addToWaitingQueue: function (req, res) {
-    var roomId = req.param('roomId');
+    var roomId = req.param('room');
     var url = req.param('url');
     var user = req.session.user;
 
@@ -182,7 +182,7 @@ module.exports = {
    */
   chat: function (req, res) {
 
-    var roomId = req.param('roomId');
+    var roomId = req.param('room');
     var message = req.param('message');
 
     Room.findOne({
@@ -211,7 +211,7 @@ module.exports = {
    */
   processConfiguration: function (req, res) {
 
-    var roomId = req.param('roomId');
+    var roomId = req.param('room');
     var motd = req.param('motd');
 
     Room.findOne({
@@ -239,9 +239,8 @@ module.exports = {
    * Response to ping
    */
   getMediaTime: function (req, res) {
-    var roomId = req.param('roomId');
     var position = -1;
-    var media = ActiveMediaService.getMedia(roomId);
+    var media = ActiveMediaService.getMedia(req.param('room'));
     if (media != null)
       position = parseInt((media.content.endTime - Date.now()) / 1000);
     return res.json({result: 'ok', position: position})

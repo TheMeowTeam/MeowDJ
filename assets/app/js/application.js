@@ -31,9 +31,7 @@ function Room() {
     if (initialized)
       return;
 
-    io.socket.post('/' + room.identifier + '/subscribe', {
-      roomId: room.identifier
-    }, function (response) {
+    io.socket.post('/' + room.identifier + '/subscribe', function (response) {
 
       if (response.result != 'ok') {
         writeChatMessage('System', 'An error occured when loading this room, please try again later or contact a staff member!', 'system');
@@ -70,7 +68,6 @@ function Room() {
         if (!textbox.val())
           return false
         io.socket.post('/' + room.identifier + '/playlist/add', {
-          roomId: room.identifier,
           url: textbox.val()
         })
         textbox.val('');
@@ -78,8 +75,8 @@ function Room() {
         return false;
       });
       loadPlayerForContent(response.media)
-      setInterval(function() {
-        io.socket.post('/' + room.identifier + '/playlist/position', {roomId: room.identifier}, function (result, err) {
+      setInterval(function () {
+        io.socket.post('/' + room.identifier + '/playlist/position', function (result, err) {
           if (result && result.position != -1 && mediaData)
             delay = result.position - mediaData.pos;
         });
@@ -110,7 +107,6 @@ function Room() {
         return false;
 
       io.socket.post('/' + room.identifier + '/chat', {
-        roomId: room.identifier,
         message: textbox.val()
       });
 
@@ -141,8 +137,7 @@ function Room() {
     return result;
   }
 
-  function resetDisplay()
-  {
+  function resetDisplay() {
     if (timer)
       clearInterval(timer);
 
@@ -157,8 +152,7 @@ function Room() {
 
   }
 
-  function loadArtwork(url)
-  {
+  function loadArtwork(url) {
     $('#artwork').css("background-image", "url('" + url + "')")
     $('#artwork').css("display", "block")
   }
@@ -181,7 +175,7 @@ function Room() {
       timer = setInterval(function () {
         mediaData.pos--;
         $('.timer').css("color", (mediaData.pos < 10 ? "red" : "#E4D7C6"))
-        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration / 1000) + (delay != 0 ? " (" + delay + "s)" : ""))
+        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration / 1000) + (delay > 1 ? " (" + delay + "s)" : ""))
       }, 1000);
 
       $('.playing').text(media.creatorName + " - " + media.title)
@@ -223,7 +217,7 @@ function Room() {
             console.warn("Media start position < 0 (" + start + ")")
           scPlayer.setVolume(volume / 100);
           scPlayer.seekTo(start)
-          scPlayer.getCurrentSound(function(data) {
+          scPlayer.getCurrentSound(function (data) {
             loadArtwork(data.artwork_url.replace("-large", "-t300x300"))
           })
           scPlayer.unbind(SC.Widget.Events.PLAY);
