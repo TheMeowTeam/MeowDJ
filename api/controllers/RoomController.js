@@ -157,7 +157,8 @@ module.exports = {
       var content = MediaService.parseURL(url);
       if (content == null)
         return res.json({result: 'error', reason: 'INVALID_CONTENT_TYPE'})
-
+      else if (content.contentID.indexOf("sets") > -1)
+        return res.json({result: 'error', reason: 'SOUNDCLOUD_SETS_DISABLED'})
 
       // Caching system search
       MediaCache.findOne({contentID: content.contentID}, function (err, cacheEntry) {
