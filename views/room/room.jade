@@ -18,7 +18,8 @@ block body
   div.room-left
     div.playback
       div#player
-      iframe#soundcloud-player(src="http://w.soundcloud.com/player?show_artwork=false&liking=false&show_comments=false&show_playcount=false&download=false&buying=false&show_user=false&sharing=false&auto_play=false")
+      div#artwork(src="/common/images/logo.png")
+      iframe#soundcloud-player(src="http://w.soundcloud.com/player?show_artwork=true&liking=false&show_comments=false&show_playcount=false&download=false&buying=false&show_user=false&sharing=false&auto_play=false")
       div.controls
         a.control-btn.media-select
           span Add music (YT/SC)

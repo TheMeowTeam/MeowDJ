@@ -234,6 +234,17 @@ module.exports = {
 
       return res.json({result: 'ok'});
     });
+  },
+  /**
+   * Response to ping
+   */
+  getMediaTime: function (req, res) {
+    var roomId = req.param('roomId');
+    var position = -1;
+    var media = ActiveMediaService.getMedia(roomId);
+    if (media != null)
+      position = parseInt((media.content.endTime - Date.now()) / 1000);
+    return res.json({result: 'ok', position: position})
   }
 };
 

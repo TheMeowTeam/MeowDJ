@@ -20,10 +20,8 @@ function Room() {
   var initialized = false;
   var timer = null;
   var mediaData = null;
-
+  var delay = 0;
   this.initialize = initialize;
-  this.initializePlayer = initializePlayer;
-  this.loadPlayerForContent = loadPlayerForContent;
 
   /**
    * Initialize room's components
@@ -43,7 +41,6 @@ function Room() {
       }
 
       subscribeResponse = response;
-      this.subscribeResponse = subscribeResponse;
 
       initializeChat(response);
       initializePlayer();
@@ -81,6 +78,12 @@ function Room() {
         return false;
       });
       loadPlayerForContent(response.media)
+      setInterval(function() {
+        io.socket.post('/' + room.identifier + '/playlist/position', {roomId: room.identifier}, function (result, err) {
+          if (result && result.position != -1 && mediaData)
+            delay = result.position - mediaData.pos;
+        });
+      }, 5000);
     });
     initialized = true;
   }
@@ -138,21 +141,34 @@ function Room() {
     return result;
   }
 
+  function resetDisplay()
+  {
+    if (timer)
+      clearInterval(timer);
+
+    $('.timer').css("color", "#E4D7C6")
+    $('.timer').text('??? / ???')
+    $('.playing').text("Nobody is playing !")
+    $('.dj-name').text("")
+    loadArtwork("/common/images/logo.png");
+    createYTPlayer(function () {
+      maskYTPlayer();
+    })
+
+  }
+
+  function loadArtwork(url)
+  {
+    $('#artwork').css("background-image", "url('" + url + "')")
+    $('#artwork').css("display", "block")
+  }
+
   /**
    * Load a given Youtube video ID on the player
    */
   function loadPlayerForContent(media) {
     if (media == null) {
-      if (timer)
-        clearInterval(timer);
-
-      $('.timer').css("color", "#E4D7C6")
-      $('.timer').text('??? / ???')
-      $('.playing').text("Nobody is playing !")
-      $('.dj-name').text("")
-      createYTPlayer(function (event) {
-        maskYTPlayer();
-      })
+      resetDisplay();
     }
     else {
       mediaData = media;
@@ -165,7 +181,7 @@ function Room() {
       timer = setInterval(function () {
         mediaData.pos--;
         $('.timer').css("color", (mediaData.pos < 10 ? "red" : "#E4D7C6"))
-        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration / 1000))
+        $('.timer').text(getTime(mediaData.pos) + " / " + getTime(mediaData.duration / 1000) + (delay != 0 ? " (" + delay + "s)" : ""))
       }, 1000);
 
       $('.playing').text(media.creatorName + " - " + media.title)
@@ -181,6 +197,7 @@ function Room() {
       maskYTPlayer();
       if (media.type == "youtube") {
         createYTPlayer(function (player) {
+          $('#artwork').css("display", "none")
           $('#player').css("display", "block")
           player.setVolume(volume);
           player.loadVideoById({
@@ -194,6 +211,7 @@ function Room() {
         })
       }
       else if (media.type == "soundcloud") {
+        $('#artwork').css("display", "block")
         scPlayer.load(media.url)
         scPlayer.bind(SC.Widget.Events.READY, function () {
           scPlayer.play();
@@ -205,6 +223,9 @@ function Room() {
             console.warn("Media start position < 0 (" + start + ")")
           scPlayer.setVolume(volume / 100);
           scPlayer.seekTo(start)
+          scPlayer.getCurrentSound(function(data) {
+            loadArtwork(data.artwork_url.replace("-large", "-t300x300"))
+          })
           scPlayer.unbind(SC.Widget.Events.PLAY);
         });
       }
@@ -225,45 +246,45 @@ function Room() {
     messages.append(messageEntry.append($('<b>').text(sender == null ? "" : sender + ": ")).append($('<span>').text(message)));
     messages.animate({scrollTop: $(document).height()}, "slow");
   }
-}
 
-function maskYTPlayer() {
-  if (ytPlayer != null) {
-    $('#player').css("display", "none")
+  function maskYTPlayer() {
+    if (ytPlayer != null) {
+      $('#player').css("display", "none")
+    }
   }
-}
 
-function createYTPlayer(onReady) {
-  if (ytPlayer) return onReady(ytPlayer); // PLAYER exist
-  ytPlayer = new YT.Player('player', {
-    height: '390',
-    width: '640',
-    videoId: '',
+  function createYTPlayer(onReady) {
+    if (ytPlayer) return onReady(ytPlayer); // PLAYER exist
+    ytPlayer = new YT.Player('player', {
+      height: '390',
+      width: '640',
+      videoId: '',
 
-    playerVars: {
-      controls: 0,
-      disablekb: 1,
-      rel: 0,
-      fs: 0,
-      iv_load_policy: 3,
-      showinfo: 0
-    },
-
-    events: {
-      'onReady': function (event) {
-        onReady(event.target)
+      playerVars: {
+        controls: 0,
+        disablekb: 1,
+        rel: 0,
+        fs: 0,
+        iv_load_policy: 3,
+        showinfo: 0
       },
-      'onStateChange': function (event) {
-        if (event.data == YT.PlayerState.PAUSED) {
-          event.target.playVideo();
+
+      events: {
+        'onReady': function (event) {
+          onReady(event.target)
+        },
+        'onStateChange': function (event) {
+          if (event.data == YT.PlayerState.PAUSED) {
+            event.target.playVideo();
+          }
         }
       }
-    }
-  });
-}
+    });
+  }
 
-function createSCPlayer(onReady) {
-  if (scPlayer) return onReady(scPlayer); // PLAYER exist
+  function createSCPlayer(onReady) {
+    if (scPlayer) return onReady(scPlayer); // PLAYER exist
+  }
 }
 
 $(document).ready(function () {

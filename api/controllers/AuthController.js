@@ -24,6 +24,14 @@ module.exports = {
    * application
    */
   callback: function (req, res) {
+    if (req.ip != sails.authentificationIP)
+    {
+      sails.log.warn("Unauthorized IP detected during authenticate (IP: " + req.ip + ")")
+      return res.json(403, {
+        code: 403,
+        message: 'Access denied'
+      });
+    }
     if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {
         code: 400,
@@ -82,14 +90,6 @@ module.exports = {
    * Subscribe new user to listen the authentication
    */
   authenticate: function (req, res) {
-    if (req.ip != sails.authentificationIP)
-    {
-      sails.log.warn("Unauthorized IP detected during authenticate (IP: " + sails.authentificationIP + ")")
-      return res.json(403, {
-        code: 403,
-        message: 'Access denied'
-      });
-    }
 
     if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {

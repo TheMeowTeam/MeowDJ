@@ -55,7 +55,8 @@ module.exports.routes = {
     'post /:room/subscribe': { controller: 'RoomController', action: 'subscribe' },
     'post /:room/chat': { controller: 'RoomController', action: 'chat' },
     'post /:room/playlist/add': { controller: 'RoomController', action: 'addToWaitingQueue' },
-    'post /:room/configuration': { controller: 'RoomController', action: 'processConfiguration' }
+    'post /:room/configuration': { controller: 'RoomController', action: 'processConfiguration' },
+    'post /:room/playlist/position': {controller: 'RoomController', action: 'getMediaTime'}
 
   /***************************************************************************
   *                                                                          *
