@@ -155,8 +155,6 @@ module.exports = {
         return res.json({result: 'error'});
       }
       var content = MediaService.parseURL(url);
-
-      // TODO: Soundcloud integration
       if (content == null)
         return res.json({result: 'error', reason: 'INVALID_CONTENT_TYPE'})
 

@@ -38,10 +38,11 @@ function parseYT(url) {
 }
 
 function parseSC(url) {
-  var regExpr = /^https?:\/\/(soundcloud.com|snd.sc)\/(.*)$/;
+  var regExpr = /^(http|https)?:\/\/(soundcloud.com|snd.sc)\/(.*)$/;
   var match = url.match(regExpr)
-  if (match != null && match[2]) {
-    return {type: "soundcloud", "contentID": match[2]}
+
+  if (match && match[3]) {
+    return {type: "soundcloud", "contentID": match[3]}
   }
   return null;
 }
@@ -80,7 +81,7 @@ function createSCCache(err, data, user, roomId)
     sails.log.warn("Error during SoundCloud API data fetching: " + (!err ? "Cannot be embed!" : err))
   else {
     MediaCache.create({
-      contentID: data.permalink_url,
+      contentID: parseSC(data.permalink_url).contentID,
       creatorID: data.user.id,
       creatorName: data.user.username,
       title: data.title,
