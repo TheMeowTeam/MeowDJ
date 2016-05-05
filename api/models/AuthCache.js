@@ -6,6 +6,7 @@
  */
 
 module.exports = {
+  connection: 'temporary',
   migrate: 'drop',
   autoUpdatedAt: false,
   attributes: {

@@ -31,9 +31,15 @@ function generateConnectionsConfiguration(conf) {
       password: conf.database.password,
       database: conf.database.name
     };
+    config['temporary'] = {
+      adapter: 'sails-disk'
+    };
   }
   else {
-    config['default'] = {
+    config['persistent'] = {
+      adapter: 'sails-disk'
+    };
+    config['temporary'] = {
       adapter: 'sails-disk'
     };
   }
