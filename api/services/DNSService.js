@@ -24,7 +24,7 @@ var domain = getHostName(sails.config.authenticationHost);
 if (domain == null)
   throw new Error('Auth server URL invalid!');
 
-sails.log.info("Loockup " + domain + " (auth server)...")
+sails.log.info("Lookup " + domain + " (auth server)...")
 
 resolveDNS(domain, function (err, ip) {
   sails.authentificationIP = ip;
