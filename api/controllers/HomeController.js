@@ -14,8 +14,8 @@ module.exports = {
    * Fired when a user wants to load the home page
    */
   index: function (req, res) {
-    
-    data = {
+
+    var data = {
       title: 'Home',
       page: 'home',
       user: req.session.user,

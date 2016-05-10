@@ -1,6 +1,5 @@
 /**
  * WaitingRoom.js - Runtime playlist data
- * TODO: use a separate Waterline connector
  * @description :: WaitingRoom5 model
  * @docs        :: http://sailsjs.org/#!documentation/models
  */

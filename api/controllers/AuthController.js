@@ -47,7 +47,7 @@ module.exports = {
           code: 403,
           message: 'Access denied'
         });
-      AuthCache.update({id: obj.id}, {transactionID: transactionID}, function (err, objUpdated) {
+      AuthCache.update({id: obj.id}, {transactionID: transactionID}, function (err) {
         if (err || !obj)
           return res.json(503, {
             code: 503,
