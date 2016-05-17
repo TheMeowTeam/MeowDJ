@@ -14,7 +14,7 @@ function getHostName(url) {
 }
 
 function resolveDNS(toResolve, callback) {
-  dns.lookup(toResolve, callback)
+  dns.lookup(toResolve, {all: true}, callback)
 }
 module.exports = {
   resolveDNS: resolveDNS
@@ -26,7 +26,7 @@ if (domain == null)
 
 sails.log.info("Lookup " + domain + " (auth server)...")
 
-resolveDNS(domain, function (err, ip) {
-  sails.authentificationIP = ip;
-  sails.log.info(domain + " <=> " + sails.authentificationIP);
+resolveDNS(domain, function (err, adresses) {
+  sails.authentificationIPs = adresses;
+  sails.log.info(domain + " <=> " + JSON.stringify(sails.authentificationIPs));
 })

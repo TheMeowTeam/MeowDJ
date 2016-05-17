@@ -32,6 +32,7 @@ function Room() {
 
         if (response.result === 'ok') {
           writeChatMessage(room.name, response.motd);
+          initialized = true;
           initializePlayer();
           loadPlayerForContent(response.media);
           setInterval(function () {
@@ -42,7 +43,6 @@ function Room() {
           }, 5000);
         } else writeChatMessage('System', 'An error occurred when loading this room, please try again later or contact a staff member!', 'system');
       });
-      initialized = true;
     }
   }
 

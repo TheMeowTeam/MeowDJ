@@ -24,7 +24,13 @@ module.exports = {
    * application
    */
   callback: function (req, res) {
-    if (req.ip != sails.authentificationIP)
+    var isOK = false;
+    for (var index in sails.authentificationIPs)
+    {
+      if (req.ip.indexOf(sails.authentificationIPs[index].address) > -1)
+        isOK = true;
+    }
+    if (!isOK)
     {
       sails.log.warn("Unauthorized IP detected during authenticate (IP: " + req.ip + ")")
       return res.json(403, {
