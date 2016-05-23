@@ -25,20 +25,18 @@ module.exports = {
    */
   callback: function (req, res) {
     var isOK = false;
-    for (var index in sails.authentificationIPs)
-    {
+    for (var index in sails.authentificationIPs) {
       if (req.ip.indexOf(sails.authentificationIPs[index].address) > -1)
         isOK = true;
     }
-    if (!isOK)
-    {
+    if (!isOK) {
       sails.log.warn("Unauthorized IP detected during authenticate (IP: " + req.ip + ")")
       return res.json(403, {
         code: 403,
         message: 'Access denied'
       });
     }
-    if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
+    if (!req.param('transactionID') || !req.param('guid') || !req.param('authenticationUserID') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {
         code: 400,
         message: 'Bad request'
@@ -61,7 +59,7 @@ module.exports = {
           });
         sails.sockets.broadcast(guid, 'login-callback', {
           user: {
-            id: req.param('userId'),
+            id: req.param('authenticationUserID'),
             username: req.param('userUsername'),
             rank: req.param('userRank'),
             guid: req.param('guid'),
@@ -97,10 +95,10 @@ module.exports = {
    */
   authenticate: function (req, res) {
 
-    if (!req.param('transactionID') || !req.param('guid') || !req.param('userId') || !req.param('userUsername') || !req.param('userRank')) {
+    if (!req.param('transactionID') || !req.param('guid') || !req.param('authenticationUserID') || !req.param('userUsername') || !req.param('userRank')) {
       return res.json(400, {
         code: 400,
-        message: 'Bad request'
+        message: 'Bad Request'
       });
     }
 
@@ -110,15 +108,19 @@ module.exports = {
           code: 403,
           message: 'Access denied'
         });
+      var id = req.param('authenticationUserID');
+      var username = req.param('userUsername');
+      var rank = req.param('userRank');
+      User.findOrCreate({authID: id}, {authID: id, username: username, rank: rank}, function (err, user) {
+        if (err || !user) return res.json(503, {code: 503, message: "Internal Server Error"});
+        else {
+          req.session.user = user;
+          req.session.authenticated = true;
+          return res.redirect('/');
+        }
+      });
       sails.log.debug("Destorying transaction " + obj.transactionID)
       AuthCache.destroy({id: obj.id});
-      req.session.authenticated = true;
-      req.session.user = {
-        id: req.param('userId'),
-        username: req.param('userUsername'),
-        rank: req.param('userRank')
-      };
-      return res.redirect('/');
     })
   }
 

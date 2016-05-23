@@ -26,7 +26,7 @@ if (domain == null)
 
 sails.log.info("Lookup " + domain + " (auth server)...")
 
-resolveDNS(domain, function (err, adresses) {
-  sails.authentificationIPs = adresses;
+resolveDNS(domain, function (err, addresses) {
+  sails.authentificationIPs = addresses;
   sails.log.info(domain + " <=> " + JSON.stringify(sails.authentificationIPs));
 })
