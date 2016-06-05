@@ -112,14 +112,14 @@ module.exports = {
       var username = req.param('userUsername');
       var rank = req.param('userRank');
       User.findOrCreate({authID: id}, {authID: id, username: username, rank: rank}, function (err, user) {
-        if (err || !user) return res.json(503, {code: 503, message: "Internal Server Error"});
+        if (err || !user)
+          return res.json(503, {code: 503, message: "Internal Server Error"});
         else {
           req.session.user = user;
           req.session.authenticated = true;
           return res.redirect('/');
         }
       });
-      sails.log.debug("Destorying transaction " + obj.transactionID)
       AuthCache.destroy({id: obj.id});
     })
   }

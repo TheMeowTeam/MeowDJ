@@ -23,7 +23,7 @@ module.exports = {
         return res.serverError(err);
       }
 
-      data = {
+      var data = {
         title: 'Create a room',
         page: 'create-room'
       };

@@ -7,7 +7,7 @@ function processAddWaitingQueue(roomID, user, data) {
   WaitingQueue.create({roomID: roomID, userID: user.id, cacheID: data.id}, function (err) {
     if (err)
       sails.log.warn("Error during adding to waiting queue " + JSON.stringify(err))
-    
+
     if (!isPlaying(roomID)) {
       nextMedia(roomID);
     }
@@ -37,7 +37,7 @@ function changeMedia(roomID, content) {
   if (sails.activeMedia[roomID])
     clearTimeout(sails.activeMedia[roomID].task)
   else sails.activeMedia[roomID] = []
-  if (content.type == "youtube")
+  if (content.type === "youtube")
     content.duration *= 1000;
   sails.activeMedia[roomID].content = content;
   sails.activeMedia[roomID].content.startTime = Date.now();
@@ -60,20 +60,15 @@ function nextMedia(roomID) {
     }
     data = data[0];
     WaitingQueue.destroy({id: data.id}, function (err) {
-
       if (err)
-        sails.log.warn(JSON.stringify(err))
-      else
-        sails.log.debug("Entry: " + data.id + " destroyed")
+        sails.log.warn(JSON.stringify(err));
     });
     MediaCache.findOne({id: data.cacheID}, function (err, cacheEntry) {
       // Entry not found, THIS SHOULDN'T BE POSSIBLE
-      if (err || !cacheEntry)
-        sails.log.error("Invalid cache entry " + data.cacheID + "! Is your metadata cache corrupted?!")
-      else
+      if (!err && cacheEntry)
         User.findOne({id: data.userID}, function (err, nextDJ) {
           if (err || !nextDJ)
-            sails.log.error("Invalid user ID " + data.userID + "! POSSIBLE DB CORRUPTION!")
+            cacheEntry.djName = "???";
           else
             cacheEntry.djName = nextDJ.username;
           changeMedia(roomID, cacheEntry);
